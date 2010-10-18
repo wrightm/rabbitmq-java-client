@@ -65,7 +65,7 @@ public class FunctionalTests extends TestCase {
         suite.addTestSuite(QueueExclusivity.class);
         suite.addTestSuite(InvalidAcks.class);
         suite.addTestSuite(InvalidAcksTx.class);
-        suite.addTestSuite(BindToDefaultExchange.class);
+        suite.addTestSuite(DefaultExchange.class);
         suite.addTestSuite(UnbindAutoDeleteExchange.class);
         suite.addTestSuite(RecoverAfterCancel.class);
         suite.addTestSuite(UnexpectedFrames.class);
