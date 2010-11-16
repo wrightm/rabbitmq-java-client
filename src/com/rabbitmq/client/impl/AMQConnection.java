@@ -34,8 +34,8 @@ package com.rabbitmq.client.impl;
 import java.io.EOFException;
 import java.io.IOException;
 import java.net.SocketException;
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.TimeoutException;
 
 import com.rabbitmq.client.AMQP;
@@ -45,6 +45,8 @@ import com.rabbitmq.client.Command;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.MissedHeartbeatException;
+import com.rabbitmq.client.PossibleAuthenticationFailureException;
+import com.rabbitmq.client.ProtocolVersionMismatchException;
 import com.rabbitmq.client.ShutdownSignalException;
 import com.rabbitmq.utility.BlockingCell;
 import com.rabbitmq.utility.Utility;
@@ -224,7 +226,10 @@ public class AMQConnection extends ShutdownNotifierComponent implements Connecti
      * Connection.Start/.StartOk, Connection.Tune/.TuneOk, and then
      * calls Connection.Open and waits for the OpenOk. Sets heartbeat
      * and frame max values after tuning has taken place.
-     * @throws java.io.IOException if an error is encountered
+     * @throws java.io.IOException if an error is encountered; IOException
+     * subtypes ProtocolVersionMismatchException and
+     * PossibleAuthenticationFailureException will be thrown in the
+     * corresponding circumstances.
      */
     public void start()
         throws IOException
@@ -256,16 +261,15 @@ public class AMQConnection extends ShutdownNotifierComponent implements Connecti
                 (AMQP.Connection.Start) connStartBlocker.getReply().getMethod();
 
             _serverProperties = connStart.getServerProperties();
-        
+
             Version serverVersion =
                 new Version(connStart.getVersionMajor(),
                             connStart.getVersionMinor());
-        
+
             if (!Version.checkVersion(clientVersion, serverVersion)) {
                 _frameHandler.close(); //this will cause mainLoop to terminate
-                //TODO: throw a more specific exception
-                throw new IOException("protocol version mismatch: expected " +
-                                      clientVersion + ", got " + serverVersion);
+                throw new ProtocolVersionMismatchException(clientVersion,
+                                                           serverVersion);
             }
         } catch (ShutdownSignalException sse) {
             throw AMQChannel.wrap(sse);
@@ -298,7 +302,7 @@ public class AMQConnection extends ShutdownNotifierComponent implements Connecti
                     response = LongStringHelper.asLongString(sc.evaluateChallenge(challenge.getBytes()));
                 }
             } catch (ShutdownSignalException e) {
-                throw AMQChannel.wrap(e, "Possibly caused by authentication failure");
+                throw new PossibleAuthenticationFailureException(e);
             }
         } while (connTune == null);
 
@@ -313,7 +317,7 @@ public class AMQConnection extends ShutdownNotifierComponent implements Connecti
             negotiatedMaxValue(_factory.getRequestedChannelMax(),
                                connTune.getChannelMax());
         _channelManager = new ChannelManager(channelMax);
-        
+
         int frameMax =
             negotiatedMaxValue(_factory.getRequestedFrameMax(),
                                connTune.getFrameMax());
@@ -323,7 +327,7 @@ public class AMQConnection extends ShutdownNotifierComponent implements Connecti
             negotiatedMaxValue(_factory.getRequestedHeartbeat(),
                                connTune.getHeartbeat());
         setHeartbeat(heartbeat);
-        
+
         _channel0.transmit(new AMQImpl.Connection.TuneOk(channelMax,
                                                          frameMax,
                                                          heartbeat));
@@ -540,7 +544,7 @@ public class AMQConnection extends ShutdownNotifierComponent implements Connecti
                 return false;
             } else {
                 // Quiescing.
-                if (method instanceof AMQP.Connection.CloseOk) {    
+                if (method instanceof AMQP.Connection.CloseOk) {
                     // It's our final "RPC". Time to shut down.
                     _running = false;
                     // If Close was sent from within the MainLoop we
@@ -569,14 +573,14 @@ public class AMQConnection extends ShutdownNotifierComponent implements Connecti
                     getHost() + ":" + getPort());
         scw.start();
     }
-    
+
     private class SocketCloseWait extends Thread {
         private ShutdownSignalException cause;
-        
+
         public SocketCloseWait(ShutdownSignalException sse) {
             cause = sse;
         }
-        
+
         @Override public void run() {
             try {
                 _appContinuation.uninterruptibleGet(CONNECTION_CLOSING_TIMEOUT);
@@ -595,7 +599,7 @@ public class AMQConnection extends ShutdownNotifierComponent implements Connecti
      * Protected API - causes all attached channels to terminate with
      * a ShutdownSignal built from the argument, and stops this
      * connection from accepting further work from the application.
-     * 
+     *
      * @return a shutdown signal built using the given arguments
      */
     public ShutdownSignalException shutdown(Object reason,
@@ -677,7 +681,7 @@ public class AMQConnection extends ShutdownNotifierComponent implements Connecti
         }
     }
 
-    /** 
+    /**
      * Protected API - Delegates to {@link
      * #close(int,String,boolean,Throwable,int,boolean) the
      * six-argument close method}, passing 0 for the timeout, and
