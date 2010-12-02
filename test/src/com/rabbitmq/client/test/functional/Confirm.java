@@ -42,25 +42,24 @@ import com.rabbitmq.client.MessageProperties;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.Map;
-import java.util.Set;
+import java.util.SortedSet;
 import java.util.TreeSet;
 
 public class Confirm extends BrokerTestCase
 {
     final static int NUM_MESSAGES = 1000;
     private static final String TTL_ARG = "x-message-ttl";
-    volatile Set<Long> ackSet;
+    private volatile SortedSet<Long> ackSet;
 
     @Override
     protected void setUp() throws IOException {
         super.setUp();
-        ackSet = new TreeSet<Long>();
+        ackSet = Collections.synchronizedSortedSet(new TreeSet<Long>());
         channel.setAckListener(new AckListener() {
                 public void handleAck(long seqNo,
                                       boolean multiple) {
                     if (multiple) {
-                        for (int i = 0; i <= seqNo; ++i)
-                            Confirm.this.gotAckFor(i);
+                        Confirm.this.gotAckForMultiple(seqNo);
                     } else {
                         Confirm.this.gotAckFor(seqNo);
                     }
@@ -68,20 +67,28 @@ public class Confirm extends BrokerTestCase
             });
         channel.confirmSelect(true);
         channel.queueDeclare("confirm-test", true, true, false, null);
-        channel.basicConsume("confirm-test", true, new DefaultConsumer(channel));
-        channel.queueDeclare("confirm-test-nondurable", false, true, false, null);
+        channel.basicConsume("confirm-test", true,
+                             new DefaultConsumer(channel));
+        channel.queueDeclare("confirm-test-nondurable", false, true,
+                             false, null);
         channel.basicConsume("confirm-test-nondurable", true,
                              new DefaultConsumer(channel));
-        channel.queueDeclare("confirm-test-noconsumer", true, true, false, null);
+        channel.queueDeclare("confirm-test-noconsumer", true,
+                             true, false, null);
         channel.queueDeclare("confirm-test-2", true, true, false, null);
-        channel.basicConsume("confirm-test-2", true, new DefaultConsumer(channel));
-        Map<String, Object> argMap = Collections.singletonMap(TTL_ARG, (Object)1);
+        channel.basicConsume("confirm-test-2", true,
+                             new DefaultConsumer(channel));
+        Map<String, Object> argMap =
+            Collections.singletonMap(TTL_ARG, (Object)1);
         channel.queueDeclare("confirm-ttl", true, true, false, argMap);
-        channel.queueBind("confirm-test", "amq.direct", "confirm-multiple-queues");
-        channel.queueBind("confirm-test-2", "amq.direct", "confirm-multiple-queues");
+        channel.queueBind("confirm-test", "amq.direct",
+                          "confirm-multiple-queues");
+        channel.queueBind("confirm-test-2", "amq.direct",
+                          "confirm-multiple-queues");
     }
 
-    public void testConfirmTransient() throws IOException, InterruptedException {
+    public void testConfirmTransient()
+        throws IOException, InterruptedException {
         confirmTest("", "confirm-test", false, false, false);
     }
 
@@ -124,7 +131,8 @@ public class Confirm extends BrokerTestCase
     public void testConfirmMultipleQueues()
         throws IOException, InterruptedException
     {
-        confirmTest("amq.direct", "confirm-multiple-queues", true, false, false);
+        confirmTest("amq.direct", "confirm-multiple-queues",
+                    true, false, false);
     }
 
     /* For testConfirmQueueDelete and testConfirmQueuePurge to be
@@ -188,7 +196,8 @@ public class Confirm extends BrokerTestCase
         publishN("", "confirm-test-noconsumer", true, false, false);
 
         for (long i = 0; i < NUM_MESSAGES; i++) {
-            GetResponse resp = channel.basicGet("confirm-test-noconsumer", false);
+            GetResponse resp =
+                channel.basicGet("confirm-test-noconsumer", false);
             long dtag = resp.getEnvelope().getDeliveryTag();
             // not acking
         }
@@ -253,8 +262,8 @@ public class Confirm extends BrokerTestCase
         throws IOException
     {
         for (long i = 0; i < NUM_MESSAGES; i++) {
-            publish(exchangeName, queueName, persistent, mandatory, immediate);
             ackSet.add(i);
+            publish(exchangeName, queueName, persistent, mandatory, immediate);
         }
     }
 
@@ -270,10 +279,14 @@ public class Confirm extends BrokerTestCase
                              "nop".getBytes());
     }
 
+    private void gotAckForMultiple(long msgSeqNo) {
+        for (long i = ackSet.first(); i <= msgSeqNo; ++i)
+            gotAckFor(i);
+    }
+
     private synchronized void gotAckFor(long msgSeqNo) {
         if (!ackSet.contains(msgSeqNo)) {
             fail("got duplicate ack: " + msgSeqNo);
-            //System.out.println("got duplicate ack: " + msgSeqNo);
         }
         ackSet.remove(msgSeqNo);
     }
@@ -284,7 +297,8 @@ public class Confirm extends BrokerTestCase
         publishN("", "confirm-test-noconsumer", true, false, false);
 
         for (long i = 0; i < NUM_MESSAGES; i++) {
-            GetResponse resp = channel.basicGet("confirm-test-noconsumer", false);
+            GetResponse resp =
+                channel.basicGet("confirm-test-noconsumer", false);
             long dtag = resp.getEnvelope().getDeliveryTag();
             channel.basicReject(dtag, requeue);
         }
