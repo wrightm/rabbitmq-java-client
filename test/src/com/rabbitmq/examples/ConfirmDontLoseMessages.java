@@ -1,38 +1,24 @@
-//   The contents of this file are subject to the Mozilla Public License
-//   Version 1.1 (the "License"); you may not use this file except in
-//   compliance with the License. You may obtain a copy of the License at
-//   http://www.mozilla.org/MPL/
+//  The contents of this file are subject to the Mozilla Public License
+//  Version 1.1 (the "License"); you may not use this file except in
+//  compliance with the License. You may obtain a copy of the License
+//  at http://www.mozilla.org/MPL/
 //
-//   Software distributed under the License is distributed on an "AS IS"
-//   basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
-//   License for the specific language governing rights and limitations
-//   under the License.
+//  Software distributed under the License is distributed on an "AS IS"
+//  basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See
+//  the License for the specific language governing rights and
+//  limitations under the License.
 //
-//   The Original Code is RabbitMQ.
+//  The Original Code is RabbitMQ.
 //
-//   The Initial Developers of the Original Code are LShift Ltd,
-//   Cohesive Financial Technologies LLC, and Rabbit Technologies Ltd.
+//  The Initial Developer of the Original Code is VMware, Inc.
+//  Copyright (c) 2007-2011 VMware, Inc.  All rights reserved.
 //
-//   Portions created before 22-Nov-2008 00:00:00 GMT by LShift Ltd,
-//   Cohesive Financial Technologies LLC, or Rabbit Technologies Ltd
-//   are Copyright (C) 2007-2008 LShift Ltd, Cohesive Financial
-//   Technologies LLC, and Rabbit Technologies Ltd.
-//
-//   Portions created by LShift Ltd are Copyright (C) 2007-2010 LShift
-//   Ltd. Portions created by Cohesive Financial Technologies LLC are
-//   Copyright (C) 2007-2010 Cohesive Financial Technologies
-//   LLC. Portions created by Rabbit Technologies Ltd are Copyright
-//   (C) 2007-2010 Rabbit Technologies Ltd.
-//
-//   All Rights Reserved.
-//
-//   Contributor(s): ______________________________________.
-//
+
 
 package com.rabbitmq.examples;
 
 import com.rabbitmq.client.AMQP;
-import com.rabbitmq.client.AckListener;
+import com.rabbitmq.client.ConfirmListener;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
@@ -66,7 +52,7 @@ public class ConfirmDontLoseMessages {
     }
 
     static class Publisher implements Runnable {
-        private volatile SortedSet<Long> ackSet =
+        private volatile SortedSet<Long> unconfirmedSet =
             Collections.synchronizedSortedSet(new TreeSet<Long>());
 
         public void run() {
@@ -77,28 +63,42 @@ public class ConfirmDontLoseMessages {
                 Connection conn = connectionFactory.newConnection();
                 Channel ch = conn.createChannel();
                 ch.queueDeclare(QUEUE_NAME, true, false, false, null);
-                ch.setAckListener(new AckListener() {
-                        public void handleAck(long seqNo,
-                                              boolean multiple) {
+                ch.setConfirmListener(new ConfirmListener() {
+                        public void handleAck(long seqNo, boolean multiple) {
                             if (multiple) {
-                                ackSet.headSet(seqNo+1).clear();
+                                unconfirmedSet.headSet(seqNo+1).clear();
                             } else {
-                                ackSet.remove(seqNo);
+                                unconfirmedSet.remove(seqNo);
                             }
+                        }
+
+                        public void handleNack(long seqNo, boolean multiple) {
+                            int lost = 0;
+                            if (multiple) {
+                                SortedSet<Long> nackd =
+                                    unconfirmedSet.headSet(seqNo+1);
+                                lost = nackd.size();
+                                nackd.clear();
+                            } else {
+                                lost = 1;
+                                unconfirmedSet.remove(seqNo);
+                            }
+                            System.out.printf("Probably lost %d messages.\n",
+                                              lost);
                         }
                     });
                 ch.confirmSelect();
 
                 // Publish
                 for (long i = 0; i < msgCount; ++i) {
-                    ackSet.add(ch.getNextPublishSeqNo());
+                    unconfirmedSet.add(ch.getNextPublishSeqNo());
                     ch.basicPublish("", QUEUE_NAME,
                                     MessageProperties.PERSISTENT_BASIC,
                                     "nop".getBytes());
                 }
 
                 // Wait
-                while (ackSet.size() > 0)
+                while (unconfirmedSet.size() > 0)
                     Thread.sleep(10);
 
                 // Cleanup

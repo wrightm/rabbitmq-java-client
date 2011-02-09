@@ -1,37 +1,23 @@
-//   The contents of this file are subject to the Mozilla Public License
-//   Version 1.1 (the "License"); you may not use this file except in
-//   compliance with the License. You may obtain a copy of the License at
-//   http://www.mozilla.org/MPL/
+//  The contents of this file are subject to the Mozilla Public License
+//  Version 1.1 (the "License"); you may not use this file except in
+//  compliance with the License. You may obtain a copy of the License
+//  at http://www.mozilla.org/MPL/
 //
-//   Software distributed under the License is distributed on an "AS IS"
-//   basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
-//   License for the specific language governing rights and limitations
-//   under the License.
+//  Software distributed under the License is distributed on an "AS IS"
+//  basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See
+//  the License for the specific language governing rights and
+//  limitations under the License.
 //
-//   The Original Code is RabbitMQ.
+//  The Original Code is RabbitMQ.
 //
-//   The Initial Developers of the Original Code are LShift Ltd,
-//   Cohesive Financial Technologies LLC, and Rabbit Technologies Ltd.
+//  The Initial Developer of the Original Code is VMware, Inc.
+//  Copyright (c) 2007-2011 VMware, Inc.  All rights reserved.
 //
-//   Portions created before 22-Nov-2008 00:00:00 GMT by LShift Ltd,
-//   Cohesive Financial Technologies LLC, or Rabbit Technologies Ltd
-//   are Copyright (C) 2007-2008 LShift Ltd, Cohesive Financial
-//   Technologies LLC, and Rabbit Technologies Ltd.
-//
-//   Portions created by LShift Ltd are Copyright (C) 2007-2010 LShift
-//   Ltd. Portions created by Cohesive Financial Technologies LLC are
-//   Copyright (C) 2007-2010 Cohesive Financial Technologies
-//   LLC. Portions created by Rabbit Technologies Ltd are Copyright
-//   (C) 2007-2010 Rabbit Technologies Ltd.
-//
-//   All Rights Reserved.
-//
-//   Contributor(s): ______________________________________.
-//
+
 
 package com.rabbitmq.client.impl;
 
-import com.rabbitmq.client.AckListener;
+import com.rabbitmq.client.ConfirmListener;
 import com.rabbitmq.client.AMQP.BasicProperties;
 import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Command;
@@ -56,7 +42,6 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.TimeoutException;
 
 
@@ -101,9 +86,9 @@ public class ChannelN extends AMQChannel implements com.rabbitmq.client.Channel 
      */
     public volatile FlowListener flowListener = null;
 
-    /** Reference to the currently-active AckListener, or null if there is none.
+    /** Reference to the currently-active ConfirmListener, or null if there is none.
      */
-    public volatile AckListener ackListener = null;
+    public volatile ConfirmListener confirmListener = null;
 
     /** Sequence number of next published message requiring confirmation.
      */
@@ -164,17 +149,17 @@ public class ChannelN extends AMQChannel implements com.rabbitmq.client.Channel 
         flowListener = listener;
     }
 
-    /** Returns the current AckListener. */
-    public AckListener getAckListener() {
-        return ackListener;
+    /** Returns the current ConfirmkListener. */
+    public ConfirmListener getConfirmListener() {
+        return confirmListener;
     }
 
     /**
-     * Sets the current AckListener.
-     * A null argument is interpreted to mean "do not use an ack listener".
+     * Sets the current ConfirmListener.
+     * A null argument is interpreted to mean "do not use a confirm listener".
      */
-    public void setAckListener(AckListener listener) {
-        ackListener = listener;
+    public void setConfirmListener(ConfirmListener listener) {
+        confirmListener = listener;
     }
 
     /** Returns the current default consumer. */
@@ -245,27 +230,16 @@ public class ChannelN extends AMQChannel implements com.rabbitmq.client.Channel 
         // incoming commands except for a close and close-ok.
 
         Method method = command.getMethod();
+        // we deal with channel.close in the same way, regardless
+        if (method instanceof Channel.Close) {
+            asyncShutdown(command);
+            return true;
+        }
 
         if (isOpen()) {
             // We're in normal running mode.
 
-            if (method instanceof Channel.Close) {
-                releaseChannelNumber();
-                ShutdownSignalException signal = new ShutdownSignalException(false,
-                                                                             false,
-                                                                             command,
-                                                                             this);
-                synchronized (_channelMutex) {
-                    try {
-                        processShutdownSignal(signal, true, false);
-                        quiescingTransmit(new Channel.CloseOk());
-                    } finally {
-                        notifyOutstandingRpc(signal);
-                    }
-                }
-                notifyListeners();
-                return true;
-            } else if (method instanceof Basic.Deliver) {
+            if (method instanceof Basic.Deliver) {
                 Basic.Deliver m = (Basic.Deliver) method;
 
                 Consumer callback = _consumers.get(m.consumerTag);
@@ -336,12 +310,23 @@ public class ChannelN extends AMQChannel implements com.rabbitmq.client.Channel 
                 return true;
             } else if (method instanceof Basic.Ack) {
                 Basic.Ack ack = (Basic.Ack) method;
-                AckListener l = getAckListener();
+                ConfirmListener l = getConfirmListener();
                 if (l != null) {
                     try {
                         l.handleAck(ack.getDeliveryTag(), ack.getMultiple());
                     } catch (Throwable ex) {
-                        _connection.getExceptionHandler().handleAckListenerException(this, ex);
+                        _connection.getExceptionHandler().handleConfirmListenerException(this, ex);
+                    }
+                }
+                return true;
+            } else if (method instanceof Basic.Nack) {
+                Basic.Nack nack = (Basic.Nack) method;
+                ConfirmListener l = getConfirmListener();
+                if (l != null) {
+                    try {
+                        l.handleNack(nack.getDeliveryTag(), nack.getMultiple());
+                    } catch (Throwable ex) {
+                        _connection.getExceptionHandler().handleConfirmListenerException(this, ex);
                     }
                 }
                 return true;
@@ -358,15 +343,9 @@ public class ChannelN extends AMQChannel implements com.rabbitmq.client.Channel 
                 return false;
             }
         } else {
-            // We're in quiescing mode.
+            // We're in quiescing mode == !isOpen()
 
-            if (method instanceof Channel.Close) {
-                // We're already shutting down, so just send back an ok.
-                synchronized (_channelMutex) {
-                    quiescingTransmit(new Channel.CloseOk());
-                }
-                return true;
-            } else if (method instanceof Channel.CloseOk) {
+            if (method instanceof Channel.CloseOk) {
                 // We're quiescing, and we see a channel.close-ok:
                 // this is our signal to leave quiescing mode and
                 // finally shut down for good. Let it be handled as an
@@ -379,6 +358,23 @@ public class ChannelN extends AMQChannel implements com.rabbitmq.client.Channel 
                 return true;
             }
         }
+    }
+
+    private void asyncShutdown(Command command) throws IOException {
+        releaseChannelNumber();
+        ShutdownSignalException signal = new ShutdownSignalException(false,
+                                                                     false,
+                                                                     command,
+                                                                     this);
+        synchronized (_channelMutex) {
+            try {
+                processShutdownSignal(signal, true, false);
+                quiescingTransmit(new Channel.CloseOk());
+            } finally {
+                notifyOutstandingRpc(signal);
+            }
+        }
+        notifyListeners();
     }
 
     /** Public API - {@inheritDoc} */
@@ -422,7 +418,7 @@ public class ChannelN extends AMQChannel implements com.rabbitmq.client.Channel 
         throws IOException
     {
         // First, notify all our dependents that we are shutting down.
-        // This clears _isOpen, so no further work from the
+        // This clears isOpen(), so no further work from the
         // application side will be accepted, and any inbound commands
         // will be discarded (unless they're channel.close-oks).
         Channel.Close reason = new Channel.Close(closeCode, closeMessage, 0, 0);
@@ -445,8 +441,8 @@ public class ChannelN extends AMQChannel implements com.rabbitmq.client.Channel 
             }
 
             // Now that we're in quiescing state, channel.close was sent and
-            // we wait for the reply. We ignore the result. (It's always
-            // close-ok.)
+            // we wait for the reply. We ignore the result.
+            // (It's NOT always close-ok.)
             notify = true;
             k.getReply(-1);
         } catch (TimeoutException ise) {
@@ -894,4 +890,5 @@ public class ChannelN extends AMQChannel implements com.rabbitmq.client.Channel 
     public long getNextPublishSeqNo() {
         return nextPublishSeqNo;
     }
+    
 }

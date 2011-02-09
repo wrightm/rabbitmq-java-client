@@ -1,33 +1,19 @@
-//   The contents of this file are subject to the Mozilla Public License
-//   Version 1.1 (the "License"); you may not use this file except in
-//   compliance with the License. You may obtain a copy of the License at
-//   http://www.mozilla.org/MPL/
+//  The contents of this file are subject to the Mozilla Public License
+//  Version 1.1 (the "License"); you may not use this file except in
+//  compliance with the License. You may obtain a copy of the License
+//  at http://www.mozilla.org/MPL/
 //
-//   Software distributed under the License is distributed on an "AS IS"
-//   basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
-//   License for the specific language governing rights and limitations
-//   under the License.
+//  Software distributed under the License is distributed on an "AS IS"
+//  basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See
+//  the License for the specific language governing rights and
+//  limitations under the License.
 //
-//   The Original Code is RabbitMQ.
+//  The Original Code is RabbitMQ.
 //
-//   The Initial Developers of the Original Code are LShift Ltd,
-//   Cohesive Financial Technologies LLC, and Rabbit Technologies Ltd.
+//  The Initial Developer of the Original Code is VMware, Inc.
+//  Copyright (c) 2007-2011 VMware, Inc.  All rights reserved.
 //
-//   Portions created before 22-Nov-2008 00:00:00 GMT by LShift Ltd,
-//   Cohesive Financial Technologies LLC, or Rabbit Technologies Ltd
-//   are Copyright (C) 2007-2008 LShift Ltd, Cohesive Financial
-//   Technologies LLC, and Rabbit Technologies Ltd.
-//
-//   Portions created by LShift Ltd are Copyright (C) 2007-2010 LShift
-//   Ltd. Portions created by Cohesive Financial Technologies LLC are
-//   Copyright (C) 2007-2010 Cohesive Financial Technologies
-//   LLC. Portions created by Rabbit Technologies Ltd are Copyright
-//   (C) 2007-2010 Rabbit Technologies Ltd.
-//
-//   All Rights Reserved.
-//
-//   Contributor(s): ______________________________________.
-//
+
 
 package com.rabbitmq.examples;
 
@@ -52,7 +38,7 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
-import com.rabbitmq.client.AckListener;
+import com.rabbitmq.client.ConfirmListener;
 import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Address;
 import com.rabbitmq.client.Channel;
@@ -100,9 +86,9 @@ public class MulticastMain {
             int frameMax         = intArg(cmd, 'M', 0);
             int heartbeat        = intArg(cmd, 'b', 0);
 
-            if ((producerTxSize + consumerTxSize > 0) && confirm) {
+            if ((producerTxSize > 0) && confirm) {
                 throw new ParseException("Cannot select both producerTxSize"+
-                                         "/consumerTxSize and confirm");
+                                         " and confirm");
             }
 
             //setup
@@ -153,7 +139,7 @@ public class MulticastMain {
                                                 rateLimit, minMsgSize, timeLimit,
                                                 confirm, confirmMax);
                 channel.setReturnListener(p);
-                channel.setAckListener(p);
+                channel.setConfirmListener(p);
                 Thread t = new Thread(p);
                 producerThreads[i] = t;
                 t.start();
@@ -228,8 +214,9 @@ public class MulticastMain {
         return Arrays.asList(vals);
     }
 
-    public static class Producer implements Runnable, ReturnListener, AckListener {
-
+    public static class Producer implements Runnable, ReturnListener,
+                                            ConfirmListener
+    {
         private Channel channel;
         private String  exchangeName;
         private String  id;
@@ -250,8 +237,9 @@ public class MulticastMain {
 
         private boolean   confirm;
         private long      confirmCount;
+        private long      nackCount;
         private Semaphore confirmPool;
-        private volatile SortedSet<Long> ackSet =
+        private volatile SortedSet<Long> unconfirmedSet =
             Collections.synchronizedSortedSet(new TreeSet<Long>());
 
         public Producer(Channel channel, String exchangeName, String id,
@@ -288,17 +276,30 @@ public class MulticastMain {
         }
 
         public void handleAck(long seqNo, boolean multiple) {
+            handleAckNack(seqNo, multiple, false);
+        }
+
+        public void handleNack(long seqNo, boolean multiple) {
+            handleAckNack(seqNo, multiple, true);
+        }
+
+        private void handleAckNack(long seqNo, boolean multiple,
+                                   boolean nack) {
             int numConfirms = 0;
             if (multiple) {
-                SortedSet<Long> confirmed = ackSet.headSet(seqNo + 1);
+                SortedSet<Long> confirmed = unconfirmedSet.headSet(seqNo + 1);
                 numConfirms += confirmed.size();
                 confirmed.clear();
             } else {
-                ackSet.remove(seqNo);
+                unconfirmedSet.remove(seqNo);
                 numConfirms = 1;
             }
             synchronized (this) {
-                confirmCount += numConfirms;
+                if (nack) {
+                    nackCount += numConfirms;
+                } else {
+                    confirmCount += numConfirms;
+                }
             }
 
             if (confirmPool != null) {
@@ -306,6 +307,7 @@ public class MulticastMain {
                     confirmPool.release();
                 }
             }
+
         }
 
         public void run() {
@@ -347,7 +349,7 @@ public class MulticastMain {
         private void publish(byte[] msg)
             throws IOException {
 
-            ackSet.add(channel.getNextPublishSeqNo());
+            unconfirmedSet.add(channel.getNextPublishSeqNo());
             channel.basicPublish(exchangeName, id,
                                  mandatory, immediate,
                                  persistent ? MessageProperties.MINIMAL_PERSISTENT_BASIC : MessageProperties.MINIMAL_BASIC,
@@ -368,14 +370,16 @@ public class MulticastMain {
                 Thread.sleep(pause);
             }
             if (elapsed > interval) {
-                long sendRate, returnRate, confirmRate;
+                long sendRate, returnRate, confirmRate, nackRate;
                 synchronized(this) {
                     sendRate     = msgCount     * 1000L / elapsed;
                     returnRate   = returnCount  * 1000L / elapsed;
                     confirmRate  = confirmCount * 1000L / elapsed;
+                    nackRate     = nackCount    * 1000L / elapsed;
                     msgCount     = 0;
                     returnCount  = 0;
                     confirmCount = 0;
+                    nackCount    = 0;
                 }
                 System.out.print("sending rate: " + sendRate + " msg/s");
                 if (mandatory || immediate) {
@@ -383,6 +387,9 @@ public class MulticastMain {
                 }
                 if (confirm) {
                     System.out.print(", confirms: " + confirmRate + " c/s");
+                    if (nackRate > 0) {
+                        System.out.print(", nacks: " + nackRate + " n/s");
+                    }
                 }
                 System.out.println();
                 lastStatsTime = now;

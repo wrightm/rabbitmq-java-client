@@ -17,10 +17,19 @@
 
 package com.rabbitmq.client;
 
-import java.util.EventListener;
+import java.io.IOException;
 
-public interface ShutdownListener extends EventListener {
+/**
+ * Implement this interface in order to be notified of Confirm events.
+ * Acks represent messages handled succesfully; Nacks represent
+ * messages lost by the broker.  Note, the lost messages could still
+ * have been delivered to consumers, but the broker cannot guarantee
+ * this.
+ */
+public interface ConfirmListener {
+    void handleAck(long deliveryTag, boolean multiple)
+        throws IOException;
 
-    public void shutdownCompleted(ShutdownSignalException cause);
-
+    void handleNack(long deliveryTag, boolean multiple)
+        throws IOException;
 }

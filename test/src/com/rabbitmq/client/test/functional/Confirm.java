@@ -1,39 +1,25 @@
-//   The contents of this file are subject to the Mozilla Public License
-//   Version 1.1 (the "License"); you may not use this file except in
-//   compliance with the License. You may obtain a copy of the License at
-//   http://www.mozilla.org/MPL/
+//  The contents of this file are subject to the Mozilla Public License
+//  Version 1.1 (the "License"); you may not use this file except in
+//  compliance with the License. You may obtain a copy of the License
+//  at http://www.mozilla.org/MPL/
 //
-//   Software distributed under the License is distributed on an "AS IS"
-//   basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
-//   License for the specific language governing rights and limitations
-//   under the License.
+//  Software distributed under the License is distributed on an "AS IS"
+//  basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See
+//  the License for the specific language governing rights and
+//  limitations under the License.
 //
-//   The Original Code is RabbitMQ.
+//  The Original Code is RabbitMQ.
 //
-//   The Initial Developers of the Original Code are LShift Ltd,
-//   Cohesive Financial Technologies LLC, and Rabbit Technologies Ltd.
+//  The Initial Developer of the Original Code is VMware, Inc.
+//  Copyright (c) 2007-2011 VMware, Inc.  All rights reserved.
 //
-//   Portions created before 22-Nov-2008 00:00:00 GMT by LShift Ltd,
-//   Cohesive Financial Technologies LLC, or Rabbit Technologies Ltd
-//   are Copyright (C) 2007-2008 LShift Ltd, Cohesive Financial
-//   Technologies LLC, and Rabbit Technologies Ltd.
-//
-//   Portions created by LShift Ltd are Copyright (C) 2007-2010 LShift
-//   Ltd. Portions created by Cohesive Financial Technologies LLC are
-//   Copyright (C) 2007-2010 Cohesive Financial Technologies
-//   LLC. Portions created by Rabbit Technologies Ltd are Copyright
-//   (C) 2007-2010 Rabbit Technologies Ltd.
-//
-//   All Rights Reserved.
-//
-//   Contributor(s): ______________________________________.
-//
+
 
 package com.rabbitmq.client.test.functional;
 
 import com.rabbitmq.client.test.BrokerTestCase;
 import com.rabbitmq.client.AMQP;
-import com.rabbitmq.client.AckListener;
+import com.rabbitmq.client.ConfirmListener;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.DefaultConsumer;
 import com.rabbitmq.client.GetResponse;
@@ -49,16 +35,20 @@ public class Confirm extends BrokerTestCase
 {
     final static int NUM_MESSAGES = 1000;
     private static final String TTL_ARG = "x-message-ttl";
-    private SortedSet<Long> ackSet;
+    private SortedSet<Long> unconfirmedSet;
 
     @Override
     protected void setUp() throws IOException {
         super.setUp();
-        ackSet = Collections.synchronizedSortedSet(new TreeSet<Long>());
-        channel.setAckListener(new AckListener() {
-                public void handleAck(long seqNo,
-                                      boolean multiple) {
+        unconfirmedSet =
+            Collections.synchronizedSortedSet(new TreeSet<Long>());
+        channel.setConfirmListener(new ConfirmListener() {
+                public void handleAck(long seqNo, boolean multiple) {
                     Confirm.this.handleAck(seqNo, multiple);
+                }
+
+                public void handleNack(long seqNo, boolean multiple) {
+                    Confirm.this.fail("got a nack");
                 }
             });
         channel.confirmSelect();
@@ -250,7 +240,7 @@ public class Confirm extends BrokerTestCase
         throws IOException
     {
         for (long i = 0; i < NUM_MESSAGES; i++) {
-            ackSet.add(channel.getNextPublishSeqNo());
+            unconfirmedSet.add(channel.getNextPublishSeqNo());
             publish(exchangeName, queueName, persistent, mandatory, immediate);
         }
     }
@@ -268,13 +258,13 @@ public class Confirm extends BrokerTestCase
     }
 
     private void handleAck(long msgSeqNo, boolean multiple) {
-        if (!ackSet.contains(msgSeqNo)) {
+        if (!unconfirmedSet.contains(msgSeqNo)) {
             fail("got duplicate ack: " + msgSeqNo);
         }
         if (multiple) {
-            ackSet.headSet(msgSeqNo + 1).clear();
+            unconfirmedSet.headSet(msgSeqNo + 1).clear();
         } else {
-            ackSet.remove(msgSeqNo);
+            unconfirmedSet.remove(msgSeqNo);
         }
     }
 
@@ -292,7 +282,7 @@ public class Confirm extends BrokerTestCase
     }
 
     private void waitAcks() throws InterruptedException {
-        while (ackSet.size() > 0)
+        while (unconfirmedSet.size() > 0)
             Thread.sleep(10);
     }
 }
