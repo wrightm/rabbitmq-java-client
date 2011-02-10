@@ -36,10 +36,10 @@ public interface ExceptionHandler {
     /**
      * Perform any required exception processing for the situation
      * when the driver thread for the connection has called a
-     * ReturnListener's handleBasicReturn method, and that method has
+     * ReturnListener's handleReturn method, and that method has
      * thrown an exception.
      * @param channel the ChannelN that held the ReturnListener
-     * @param exception the exception thrown by ReturnListener.handleBasicReturn
+     * @param exception the exception thrown by ReturnListener.handleReturn
      */
     void handleReturnListenerException(Channel channel, Throwable exception);
 
@@ -55,13 +55,13 @@ public interface ExceptionHandler {
 
     /**
      * Perform any required exception processing for the situation
-     * when the driver thread for the connection has called an
-     * AckListener's handleAck method, and that method has
-     * thrown an exeption.
-     * @param channel the ChannelN that held the AckListener
-     * @param exception the exception thrown by AckListener.handleAck
+     * when the driver thread for the connection has called a
+     * ConfirmListener's handleAck or handleNack method, and that
+     * method has thrown an exception.
+     * @param channel the ChannelN that held the ConfirmListener
+     * @param exception the exception thrown by ConfirmListener.handleAck
      */
-    void handleAckListenerException(Channel channel, Throwable exception);
+    void handleConfirmListenerException(Channel channel, Throwable exception);
 
     /**
      * Perform any required exception processing for the situation
