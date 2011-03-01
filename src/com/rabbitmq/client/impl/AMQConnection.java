@@ -61,6 +61,10 @@ public class AMQConnection extends ShutdownNotifierComponent implements Connecti
      * @see Connection#getClientProperties
      */
     public static Map<String, Object> defaultClientProperties() {
+        Map<String, Object> capabilities = new HashMap<String, Object>();
+        capabilities.put("publisher_confirms", true);
+        capabilities.put("exchange_exchange_bindings", true);
+        capabilities.put("basic.nack", true);
         return Frame.buildTable(new Object[] {
                 "product", LongStringHelper.asLongString("RabbitMQ"),
                 "version", LongStringHelper.asLongString(ClientVersion.VERSION),
@@ -68,7 +72,8 @@ public class AMQConnection extends ShutdownNotifierComponent implements Connecti
                 "copyright", LongStringHelper.asLongString(
                     "Copyright (C) 2007-2011 VMware, Inc."),
                 "information", LongStringHelper.asLongString(
-                    "Licensed under the MPL. See http://www.rabbitmq.com/")
+                    "Licensed under the MPL. See http://www.rabbitmq.com/"),
+                "capabilities", capabilities
             });
     }
 
@@ -317,9 +322,9 @@ public class AMQConnection extends ShutdownNotifierComponent implements Connecti
                                                          heartbeat));
         // 0.9.1: insist [on not being redirected] is deprecated, but
         // still in generated code; just pass a dummy value here
-        Method res = _channel0.exnWrappingRpc(new AMQImpl.Connection.Open(_virtualHost,
-                                                                          "",
-                                                                          false)).getMethod();
+        _channel0.exnWrappingRpc(new AMQImpl.Connection.Open(_virtualHost,
+                                                            "",
+                                                            false)).getMethod();
         return;
     }
 
@@ -594,11 +599,9 @@ public class AMQConnection extends ShutdownNotifierComponent implements Connecti
         ShutdownSignalException sse = new ShutdownSignalException(true,initiatedByApplication,
                                                                   reason, this);
         sse.initCause(cause);
-        synchronized (this) {
-            if (initiatedByApplication)
-                ensureIsOpen(); // invariant: we should never be shut down more than once per instance
-            if (isOpen())
-                _shutdownCause = sse;
+        if (!setShutdownCauseIfOpen(sse)) {
+            if (initiatedByApplication) 
+                throw new AlreadyClosedException("Attempt to use closed connection", this);
         }
 
         // stop any heartbeating

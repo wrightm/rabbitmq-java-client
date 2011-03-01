@@ -18,7 +18,7 @@
 package com.rabbitmq.examples;
 
 import com.rabbitmq.client.AMQP;
-import com.rabbitmq.client.AckListener;
+import com.rabbitmq.client.ConfirmListener;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
@@ -32,23 +32,27 @@ import java.util.TreeSet;
 import java.io.IOException;
 
 public class ConfirmDontLoseMessages {
-    final static int MSG_COUNT = 10000;
+    static int msgCount = 10000;
     final static String QUEUE_NAME = "confirm-test";
     static ConnectionFactory connectionFactory;
 
     public static void main(String[] args)
         throws IOException, InterruptedException
     {
+        if (args.length > 0) {
+                msgCount = Integer.parseInt(args[0]);
+        }
+
         connectionFactory = new ConnectionFactory();
 
-        // Publish MSG_COUNT messages and wait for confirms.
+        // Consume msgCount messages.
         (new Thread(new Consumer())).start();
-        // Consume MSG_COUNT messages.
+        // Publish msgCount messages and wait for confirms.
         (new Thread(new Publisher())).start();
     }
 
     static class Publisher implements Runnable {
-        private volatile SortedSet<Long> ackSet =
+        private volatile SortedSet<Long> unconfirmedSet =
             Collections.synchronizedSortedSet(new TreeSet<Long>());
 
         public void run() {
@@ -58,32 +62,47 @@ public class ConfirmDontLoseMessages {
                 // Setup
                 Connection conn = connectionFactory.newConnection();
                 Channel ch = conn.createChannel();
-                ch.queueDeclare(QUEUE_NAME, true, false, true, null);
-                ch.confirmSelect();
-                ch.setAckListener(new AckListener() {
-                        public void handleAck(long seqNo,
-                                              boolean multiple) {
+                ch.queueDeclare(QUEUE_NAME, true, false, false, null);
+                ch.setConfirmListener(new ConfirmListener() {
+                        public void handleAck(long seqNo, boolean multiple) {
                             if (multiple) {
-                                ackSet.headSet(seqNo+1).clear();
+                                unconfirmedSet.headSet(seqNo+1).clear();
                             } else {
-                                ackSet.remove(seqNo);
+                                unconfirmedSet.remove(seqNo);
                             }
                         }
+
+                        public void handleNack(long seqNo, boolean multiple) {
+                            int lost = 0;
+                            if (multiple) {
+                                SortedSet<Long> nackd =
+                                    unconfirmedSet.headSet(seqNo+1);
+                                lost = nackd.size();
+                                nackd.clear();
+                            } else {
+                                lost = 1;
+                                unconfirmedSet.remove(seqNo);
+                            }
+                            System.out.printf("Probably lost %d messages.\n",
+                                              lost);
+                        }
                     });
+                ch.confirmSelect();
 
                 // Publish
-                for (long i = 0; i < MSG_COUNT; ++i) {
-                    ackSet.add(ch.getNextPublishSeqNo());
+                for (long i = 0; i < msgCount; ++i) {
+                    unconfirmedSet.add(ch.getNextPublishSeqNo());
                     ch.basicPublish("", QUEUE_NAME,
                                     MessageProperties.PERSISTENT_BASIC,
                                     "nop".getBytes());
                 }
 
                 // Wait
-                while (ackSet.size() > 0)
+                while (unconfirmedSet.size() > 0)
                     Thread.sleep(10);
 
                 // Cleanup
+                ch.queueDelete(QUEUE_NAME);
                 ch.close();
                 conn.close();
 
@@ -103,16 +122,16 @@ public class ConfirmDontLoseMessages {
                 // Setup
                 Connection conn = connectionFactory.newConnection();
                 Channel ch = conn.createChannel();
-                ch.queueDeclare(QUEUE_NAME, true, false, true, null);
+                ch.queueDeclare(QUEUE_NAME, true, false, false, null);
 
                 // Consume
                 QueueingConsumer qc = new QueueingConsumer(ch);
                 ch.basicConsume(QUEUE_NAME, true, qc);
-                for (int i = 0; i < MSG_COUNT; ++i) {
+                for (int i = 0; i < msgCount; ++i) {
                     qc.nextDelivery();
                 }
 
-                // Consume
+                // Cleanup
                 ch.close();
                 conn.close();
             } catch (Throwable e) {
