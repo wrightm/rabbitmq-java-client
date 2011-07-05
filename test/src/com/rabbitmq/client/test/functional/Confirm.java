@@ -58,60 +58,60 @@ public class Confirm extends ConfirmBase
                           "confirm-multiple-queues");
     }
 
-    public void testConfirmTransient()
+    public void testTransient()
         throws IOException, InterruptedException {
         confirmTest("", "confirm-test", false, false, false);
     }
 
-    public void testConfirmPersistentSimple()
+    public void testPersistentSimple()
         throws IOException, InterruptedException
     {
         confirmTest("", "confirm-test", true, false, false);
     }
 
-    public void testConfirmNonDurable()
+    public void testNonDurable()
         throws IOException, InterruptedException
     {
         confirmTest("", "confirm-test-nondurable", true, false, false);
     }
 
-    public void testConfirmPersistentImmediate()
+    public void testPersistentImmediate()
         throws IOException, InterruptedException
     {
         confirmTest("", "confirm-test", true, false, true);
     }
 
-    public void testConfirmPersistentImmediateNoConsumer()
+    public void testPersistentImmediateNoConsumer()
         throws IOException, InterruptedException
     {
         confirmTest("", "confirm-test-noconsumer", true, false, true);
     }
 
-    public void testConfirmPersistentMandatory()
+    public void testPersistentMandatory()
         throws IOException, InterruptedException
     {
         confirmTest("", "confirm-test", true, true, false);
     }
 
-    public void testConfirmPersistentMandatoryReturn()
+    public void testPersistentMandatoryReturn()
         throws IOException, InterruptedException
     {
         confirmTest("", "confirm-test-doesnotexist", true, true, false);
     }
 
-    public void testConfirmMultipleQueues()
+    public void testMultipleQueues()
         throws IOException, InterruptedException
     {
         confirmTest("amq.direct", "confirm-multiple-queues",
                     true, false, false);
     }
 
-    /* For testConfirmQueueDelete and testConfirmQueuePurge to be
+    /* For testQueueDelete and testQueuePurge to be
      * relevant, the msg_store must not write the messages to disk
      * (thus causing a confirm).  I'd manually comment out the line in
      * internal_sync that notifies the clients. */
 
-    public void testConfirmQueueDelete()
+    public void testQueueDelete()
         throws IOException, InterruptedException
     {
         publishN("","confirm-test-noconsumer", true, false, false);
@@ -121,7 +121,7 @@ public class Confirm extends ConfirmBase
         waitAcks();
     }
 
-    public void testConfirmQueuePurge()
+    public void testQueuePurge()
         throws IOException, InterruptedException
     {
         publishN("", "confirm-test-noconsumer", true, false, false);
@@ -131,7 +131,7 @@ public class Confirm extends ConfirmBase
         waitAcks();
     }
 
-    public void testConfirmBasicReject()
+    public void testBasicReject()
         throws IOException, InterruptedException
     {
         basicRejectCommon(false);
@@ -139,7 +139,7 @@ public class Confirm extends ConfirmBase
         waitAcks();
     }
 
-    public void testConfirmQueueTTL()
+    public void testQueueTTL()
         throws IOException, InterruptedException
     {
         publishN("", "confirm-ttl", true, false, false);
@@ -147,7 +147,7 @@ public class Confirm extends ConfirmBase
         waitAcks();
     }
 
-    public void testConfirmBasicRejectRequeue()
+    public void testBasicRejectRequeue()
         throws IOException, InterruptedException
     {
         basicRejectCommon(true);
@@ -161,7 +161,7 @@ public class Confirm extends ConfirmBase
         waitAcks();
     }
 
-    public void testConfirmBasicRecover()
+    public void testBasicRecover()
         throws IOException, InterruptedException
     {
         publishN("", "confirm-test-noconsumer", true, false, false);
@@ -183,7 +183,7 @@ public class Confirm extends ConfirmBase
         waitAcks();
     }
 
-    public void testConfirmSelect()
+    public void testSelect()
         throws IOException
     {
         try {
