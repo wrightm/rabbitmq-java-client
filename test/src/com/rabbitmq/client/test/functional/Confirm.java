@@ -19,38 +19,24 @@ package com.rabbitmq.client.test.functional;
 
 import com.rabbitmq.client.test.BrokerTestCase;
 import com.rabbitmq.client.AMQP;
-import com.rabbitmq.client.ConfirmListener;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.DefaultConsumer;
 import com.rabbitmq.client.GetResponse;
-import com.rabbitmq.client.MessageProperties;
+import com.rabbitmq.client.test.ConfirmBase;
 
 import java.io.IOException;
 import java.util.Collections;
 import java.util.Map;
-import java.util.SortedSet;
-import java.util.TreeSet;
 
-public class Confirm extends BrokerTestCase
+public class Confirm extends ConfirmBase
 {
-    final static int NUM_MESSAGES = 1000;
+    private final static int NUM_MESSAGES = 1000;
+
     private static final String TTL_ARG = "x-message-ttl";
-    private SortedSet<Long> unconfirmedSet;
 
     @Override
     protected void setUp() throws IOException {
         super.setUp();
-        unconfirmedSet =
-            Collections.synchronizedSortedSet(new TreeSet<Long>());
-        channel.setConfirmListener(new ConfirmListener() {
-                public void handleAck(long seqNo, boolean multiple) {
-                    Confirm.this.handleAck(seqNo, multiple);
-                }
-
-                public void handleNack(long seqNo, boolean multiple) {
-                    fail("got a nack");
-                }
-            });
         channel.confirmSelect();
         channel.queueDeclare("confirm-test", true, true, false, null);
         channel.basicConsume("confirm-test", true,
@@ -73,60 +59,60 @@ public class Confirm extends BrokerTestCase
                           "confirm-multiple-queues");
     }
 
-    public void testConfirmTransient()
+    public void testTransient()
         throws IOException, InterruptedException {
         confirmTest("", "confirm-test", false, false, false);
     }
 
-    public void testConfirmPersistentSimple()
+    public void testPersistentSimple()
         throws IOException, InterruptedException
     {
         confirmTest("", "confirm-test", true, false, false);
     }
 
-    public void testConfirmNonDurable()
+    public void testNonDurable()
         throws IOException, InterruptedException
     {
         confirmTest("", "confirm-test-nondurable", true, false, false);
     }
 
-    public void testConfirmPersistentImmediate()
+    public void testPersistentImmediate()
         throws IOException, InterruptedException
     {
         confirmTest("", "confirm-test", true, false, true);
     }
 
-    public void testConfirmPersistentImmediateNoConsumer()
+    public void testPersistentImmediateNoConsumer()
         throws IOException, InterruptedException
     {
         confirmTest("", "confirm-test-noconsumer", true, false, true);
     }
 
-    public void testConfirmPersistentMandatory()
+    public void testPersistentMandatory()
         throws IOException, InterruptedException
     {
         confirmTest("", "confirm-test", true, true, false);
     }
 
-    public void testConfirmPersistentMandatoryReturn()
+    public void testPersistentMandatoryReturn()
         throws IOException, InterruptedException
     {
         confirmTest("", "confirm-test-doesnotexist", true, true, false);
     }
 
-    public void testConfirmMultipleQueues()
+    public void testMultipleQueues()
         throws IOException, InterruptedException
     {
         confirmTest("amq.direct", "confirm-multiple-queues",
                     true, false, false);
     }
 
-    /* For testConfirmQueueDelete and testConfirmQueuePurge to be
+    /* For testQueueDelete and testQueuePurge to be
      * relevant, the msg_store must not write the messages to disk
      * (thus causing a confirm).  I'd manually comment out the line in
      * internal_sync that notifies the clients. */
 
-    public void testConfirmQueueDelete()
+    public void testQueueDelete()
         throws IOException, InterruptedException
     {
         publishN("","confirm-test-noconsumer", true, false, false);
@@ -136,7 +122,7 @@ public class Confirm extends BrokerTestCase
         waitAcks();
     }
 
-    public void testConfirmQueuePurge()
+    public void testQueuePurge()
         throws IOException, InterruptedException
     {
         publishN("", "confirm-test-noconsumer", true, false, false);
@@ -146,7 +132,7 @@ public class Confirm extends BrokerTestCase
         waitAcks();
     }
 
-    public void testConfirmBasicReject()
+    public void testBasicReject()
         throws IOException, InterruptedException
     {
         basicRejectCommon(false);
@@ -154,7 +140,7 @@ public class Confirm extends BrokerTestCase
         waitAcks();
     }
 
-    public void testConfirmQueueTTL()
+    public void testQueueTTL()
         throws IOException, InterruptedException
     {
         publishN("", "confirm-ttl", true, false, false);
@@ -162,7 +148,7 @@ public class Confirm extends BrokerTestCase
         waitAcks();
     }
 
-    public void testConfirmBasicRejectRequeue()
+    public void testBasicRejectRequeue()
         throws IOException, InterruptedException
     {
         basicRejectCommon(true);
@@ -176,7 +162,7 @@ public class Confirm extends BrokerTestCase
         waitAcks();
     }
 
-    public void testConfirmBasicRecover()
+    public void testBasicRecover()
         throws IOException, InterruptedException
     {
         publishN("", "confirm-test-noconsumer", true, false, false);
@@ -198,7 +184,7 @@ public class Confirm extends BrokerTestCase
         waitAcks();
     }
 
-    public void testConfirmSelect()
+    public void testSelect()
         throws IOException
     {
         try {
@@ -222,8 +208,7 @@ public class Confirm extends BrokerTestCase
         ch.confirmSelect();
     }
 
-    /* Publish NUM_MESSAGES persistent messages and wait for
-     * confirmations. */
+    /* Publish NUM_MESSAGES messages and wait for confirmations. */
     public void confirmTest(String exchange, String queueName,
                             boolean persistent, boolean mandatory,
                             boolean immediate)
@@ -240,31 +225,7 @@ public class Confirm extends BrokerTestCase
         throws IOException
     {
         for (long i = 0; i < NUM_MESSAGES; i++) {
-            unconfirmedSet.add(channel.getNextPublishSeqNo());
             publish(exchangeName, queueName, persistent, mandatory, immediate);
-        }
-    }
-
-
-    private void publish(String exchangeName, String queueName,
-                         boolean persistent, boolean mandatory,
-                         boolean immediate)
-        throws IOException
-    {
-        channel.basicPublish(exchangeName, queueName, mandatory, immediate,
-                             persistent ? MessageProperties.PERSISTENT_BASIC
-                                        : MessageProperties.BASIC,
-                             "nop".getBytes());
-    }
-
-    private void handleAck(long msgSeqNo, boolean multiple) {
-        if (!unconfirmedSet.contains(msgSeqNo)) {
-            fail("got duplicate ack: " + msgSeqNo);
-        }
-        if (multiple) {
-            unconfirmedSet.headSet(msgSeqNo + 1).clear();
-        } else {
-            unconfirmedSet.remove(msgSeqNo);
         }
     }
 
@@ -279,10 +240,5 @@ public class Confirm extends BrokerTestCase
             long dtag = resp.getEnvelope().getDeliveryTag();
             channel.basicReject(dtag, requeue);
         }
-    }
-
-    private void waitAcks() throws InterruptedException {
-        while (unconfirmedSet.size() > 0)
-            Thread.sleep(10);
     }
 }
