@@ -125,6 +125,12 @@ public interface Channel extends ShutdownNotifier {
     boolean removeReturnListener(ReturnListener listener);
 
     /**
+     * Remove all {@link ReturnListener}s.
+     * @return the number of listeners removed
+     */
+    int clearReturnListeners();
+
+    /**
      * Add a {@link FlowListener}.
      * @param listener the listener to add
      */
@@ -139,6 +145,12 @@ public interface Channel extends ShutdownNotifier {
     boolean removeFlowListener(FlowListener listener);
 
     /**
+     * Remove all {@link FlowListener}s.
+     * @return the number of listeners removed
+     */
+    int clearFlowListeners();
+
+    /**
      * Add a {@link ConfirmListener}.
      * @param listener the listener to add
      */
@@ -151,6 +163,12 @@ public interface Channel extends ShutdownNotifier {
      * <code><b>false</b></code> otherwise
      */
     boolean removeConfirmListener(ConfirmListener listener);
+
+    /**
+     * Remove all {@link ConfirmListener}s.
+     * @return the number of listeners removed
+     */
+    int clearConfirmListeners();
 
     /**
      * Get the current default consumer. @see setDefaultConsumer for rationale.

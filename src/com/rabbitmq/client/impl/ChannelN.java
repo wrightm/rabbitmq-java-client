@@ -141,6 +141,14 @@ public class ChannelN extends AMQChannel implements com.rabbitmq.client.Channel 
         }
     }
 
+    public int clearReturnListeners() {
+        synchronized(listenersMonitor) {
+            int result = returnListeners.size();
+            returnListeners.clear();
+            return result;
+        }
+    }
+
     /** Returns a readable copy of the current FlowListener collection. */
     private Collection<FlowListener> getFlowListeners() {
         synchronized (listenersMonitor) {
@@ -162,6 +170,14 @@ public class ChannelN extends AMQChannel implements com.rabbitmq.client.Channel 
         }
     }
 
+    public int clearFlowListeners() {
+        synchronized(listenersMonitor) {
+            int result = flowListeners.size();
+            flowListeners.clear();
+            return result;
+        }
+    }
+
     /** Returns a readable copy of the current ConfirmListener collection. */
     private Collection<ConfirmListener> getConfirmListeners() {
         synchronized (listenersMonitor) {
@@ -180,6 +196,14 @@ public class ChannelN extends AMQChannel implements com.rabbitmq.client.Channel 
     public boolean removeConfirmListener(ConfirmListener listener) {
         synchronized (listenersMonitor) {
             return confirmListeners.remove(listener);
+        }
+    }
+
+    public int clearConfirmListeners() {
+        synchronized(listenersMonitor) {
+            int result = confirmListeners.size();
+            confirmListeners.clear();
+            return result;
         }
     }
 

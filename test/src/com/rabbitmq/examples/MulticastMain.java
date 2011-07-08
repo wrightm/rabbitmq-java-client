@@ -83,11 +83,6 @@ public class MulticastMain {
             int frameMax         = intArg(cmd, 'M', 0);
             int heartbeat        = intArg(cmd, 'b', 0);
 
-            if ((producerTxSize > 0) && confirm >= 0) {
-                throw new ParseException("Cannot select both producerTxSize"+
-                                         " and confirm");
-            }
-
             //setup
             String id = UUID.randomUUID().toString();
             Stats stats = new Stats(1000L * samplingInterval);
@@ -122,11 +117,13 @@ public class MulticastMain {
             }
             Thread[] producerThreads = new Thread[producerCount];
             Connection[] producerConnections = new Connection[producerCount];
+            Channel[] producerChannels = new Channel[producerCount];
             for (int i = 0; i < producerCount; i++) {
                 System.out.println("starting producer #" + i);
                 Connection conn = factory.newConnection();
                 producerConnections[i] = conn;
                 Channel channel = conn.createChannel();
+                producerChannels[i] = channel;
                 if (producerTxSize > 0) channel.txSelect();
                 if (confirm >= 0) channel.confirmSelect();
                 channel.exchangeDeclare(exchangeName, exchangeType);
@@ -144,6 +141,8 @@ public class MulticastMain {
 
             for (int i = 0; i < producerCount; i++) {
                 producerThreads[i].join();
+                producerChannels[i].clearReturnListeners();
+                producerChannels[i].clearConfirmListeners();
                 producerConnections[i].close();
             }
 
