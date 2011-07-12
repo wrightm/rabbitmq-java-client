@@ -186,6 +186,7 @@ public class Confirm extends ConfirmBase
     public void testSelect()
         throws IOException
     {
+        channel.confirmSelect();
         try {
             Channel ch = connection.createChannel();
             ch.confirmSelect();
@@ -202,9 +203,6 @@ public class Confirm extends ConfirmBase
         } catch (IOException ioe) {
             checkShutdownSignal(AMQP.PRECONDITION_FAILED, ioe);
         }
-        Channel ch = connection.createChannel();
-        ch.confirmSelect();
-        ch.confirmSelect();
     }
 
     /* Publish NUM_MESSAGES messages and wait for confirmations. */
