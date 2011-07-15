@@ -97,9 +97,8 @@ public class ChannelN extends AMQChannel implements com.rabbitmq.client.Channel 
     private volatile SortedSet<Long> unconfirmedSet =
             Collections.synchronizedSortedSet(new TreeSet<Long>());
 
-    /** Whether any nacks have been received since the last
-     * waitForConfirms(). */
-    protected volatile boolean onlyAcksReceived = true;
+    /** Whether any nacks have been received since the last waitForConfirms(). */
+    private volatile boolean onlyAcksReceived = true;
 
     /**
      * Construct a new channel on the given connection with the given
@@ -164,12 +163,13 @@ public class ChannelN extends AMQChannel implements com.rabbitmq.client.Channel 
     public boolean waitForConfirms()
         throws InterruptedException
     {
+        long seqHead = this.getNextPublishSeqNo();
         synchronized (unconfirmedSet) {
             while (true) {
                 if (getCloseReason() != null) {
                     throw Utility.fixStackTrace(getCloseReason());
                 }
-                if (unconfirmedSet.isEmpty()) {
+                if (unconfirmedSet.headSet(seqHead).isEmpty()) {
                     boolean aux = onlyAcksReceived;
                     onlyAcksReceived = true;
                     return aux;
