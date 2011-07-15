@@ -85,8 +85,7 @@ public class ChannelN extends AMQChannel implements com.rabbitmq.client.Channel 
      */
     public volatile ConfirmListener confirmListener = null;
 
-    /** Sequence number of next published message requiring confirmation.
-     */
+    /** Sequence number of next published message requiring confirmation. */
     private long nextPublishSeqNo = 0L;
 
     /** Reference to the currently-active default consumer, or null if there is
@@ -95,7 +94,7 @@ public class ChannelN extends AMQChannel implements com.rabbitmq.client.Channel 
     public volatile Consumer defaultConsumer = null;
 
     /** Set of currently unconfirmed messages (i.e. messages that have
-     * not been ack'd or nack'd by the server yet. */
+     *  not been ack'd or nack'd by the server yet. */
     protected volatile SortedSet<Long> unconfirmedSet =
             Collections.synchronizedSortedSet(new TreeSet<Long>());
 
@@ -162,12 +161,13 @@ public class ChannelN extends AMQChannel implements com.rabbitmq.client.Channel 
     public boolean waitForConfirms()
         throws InterruptedException
     {
+        long seqHead = this.getNextPublishSeqNo();
         synchronized (unconfirmedSet) {
             while (true) {
                 if (getCloseReason() != null) {
                     throw Utility.fixStackTrace(getCloseReason());
                 }
-                if (unconfirmedSet.isEmpty()) {
+                if (unconfirmedSet.headSet(seqHead).isEmpty()) {
                     boolean aux = onlyAcksReceived;
                     onlyAcksReceived = true;
                     return aux;
@@ -242,7 +242,7 @@ public class ChannelN extends AMQChannel implements com.rabbitmq.client.Channel 
         super.processShutdownSignal(signal, ignoreClosed, notifyRpc);
         broadcastShutdownSignal(signal);
         synchronized (unconfirmedSet) {
-            unconfirmedSet.notify();
+            unconfirmedSet.notifyAll();
         }
     }
 
@@ -1028,7 +1028,7 @@ public class ChannelN extends AMQChannel implements com.rabbitmq.client.Channel 
         synchronized (unconfirmedSet) {
             onlyAcksReceived = onlyAcksReceived && !nack;
             if (unconfirmedSet.isEmpty())
-                unconfirmedSet.notify();
+                unconfirmedSet.notifyAll();
         }
     }
 }
