@@ -71,7 +71,7 @@ public class ChannelN extends AMQChannel implements com.rabbitmq.client.Channel 
      * BlockingRpcContinuation to inject code into the reader thread
      * in basicConsume and basicCancel.
      */
-    public final Map<String, Consumer> _consumers =
+    private final Map<String, Consumer> _consumers =
         Collections.synchronizedMap(new HashMap<String, Consumer>());
 
     /* All listeners collections are in CopyOnWriteArrayList objects */
@@ -86,10 +86,10 @@ public class ChannelN extends AMQChannel implements com.rabbitmq.client.Channel 
     private long nextPublishSeqNo = 0L;
 
     /** The current default consumer, or null if there is none. */
-    public volatile Consumer defaultConsumer = null;
+    private volatile Consumer defaultConsumer = null;
 
     /** Set of currently unconfirmed messages (i.e. messages that have
-     * not been ack'd or nack'd by the server yet. */
+     *  not been ack'd or nack'd by the server yet. */
     private volatile SortedSet<Long> unconfirmedSet =
             Collections.synchronizedSortedSet(new TreeSet<Long>());
 
@@ -161,12 +161,13 @@ public class ChannelN extends AMQChannel implements com.rabbitmq.client.Channel 
     public boolean waitForConfirms()
         throws InterruptedException
     {
+        long seqHead = this.getNextPublishSeqNo();
         synchronized (unconfirmedSet) {
             while (true) {
                 if (getCloseReason() != null) {
                     throw Utility.fixStackTrace(getCloseReason());
                 }
-                if (unconfirmedSet.isEmpty()) {
+                if (unconfirmedSet.headSet(seqHead).isEmpty()) {
                     boolean aux = onlyAcksReceived;
                     onlyAcksReceived = true;
                     return aux;
@@ -233,7 +234,7 @@ public class ChannelN extends AMQChannel implements com.rabbitmq.client.Channel 
         super.processShutdownSignal(signal, ignoreClosed, notifyRpc);
         broadcastShutdownSignal(signal);
         synchronized (unconfirmedSet) {
-            unconfirmedSet.notify();
+            unconfirmedSet.notifyAll();
         }
     }
 
@@ -1032,7 +1033,7 @@ public class ChannelN extends AMQChannel implements com.rabbitmq.client.Channel 
         synchronized (unconfirmedSet) {
             onlyAcksReceived = onlyAcksReceived && !nack;
             if (unconfirmedSet.isEmpty())
-                unconfirmedSet.notify();
+                unconfirmedSet.notifyAll();
         }
     }
 }
