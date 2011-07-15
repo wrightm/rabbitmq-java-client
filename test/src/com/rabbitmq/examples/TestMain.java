@@ -29,12 +29,11 @@ import com.rabbitmq.client.DefaultConsumer;
 import com.rabbitmq.client.Envelope;
 import com.rabbitmq.client.GetResponse;
 import com.rabbitmq.client.MessageProperties;
+import com.rabbitmq.client.Method;
 import com.rabbitmq.client.ReturnListener;
 import com.rabbitmq.client.ShutdownSignalException;
 import com.rabbitmq.client.impl.AMQConnection;
-import com.rabbitmq.client.impl.AMQImpl;
 import com.rabbitmq.client.impl.FrameHandler;
-import com.rabbitmq.client.impl.Method;
 import com.rabbitmq.client.impl.SocketFrameHandler;
 import com.rabbitmq.utility.BlockingCell;
 import com.rabbitmq.utility.Utility;
@@ -233,7 +232,12 @@ public class TestMain {
         _ch1.setReturnListener(new ReturnListener() {
             public void handleReturn(int replyCode, String replyText, String exchange, String routingKey, AMQP.BasicProperties properties, byte[] body)
                     throws IOException {
-                Method method = new AMQImpl.Basic.Return(replyCode, replyText, exchange, routingKey);
+                Method method = new AMQP.Basic.Return.Builder()
+                                    .replyCode(replyCode)
+                                    .replyText(replyText)
+                                    .exchange(exchange)
+                                    .routingKey(routingKey)
+                                .build();
                 log("Handling return with body " + new String(body));
                 returnCell.set(new Object[] { method, properties, body });
             }
@@ -430,7 +434,7 @@ public class TestMain {
 
     public void doBasicReturn(BlockingCell<Object> cell, int expectedCode) {
         Object[] a = (Object[]) cell.uninterruptibleGet();
-        AMQImpl.Basic.Return method = (AMQImpl.Basic.Return) a[0];
+        AMQP.Basic.Return method = (AMQP.Basic.Return) a[0];
         log("Returned: " + method);
         log(" - props: " + a[1]);
         log(" - body: " + new String((byte[]) a[2]));
@@ -494,58 +498,16 @@ public class TestMain {
         _ch1.basicPublish("", queueName, false, false, null, "normal".getBytes());
         _ch1.basicPublish("", queueName, true, false, null, "mandatory".getBytes());
         _ch1.basicPublish("", "bogus", true, false, null, "mandatory".getBytes());
+        _ch1.txCommit();
         doBasicReturn(returnCell, AMQP.NO_ROUTE);
         returnCell = new BlockingCell<Object>();
         _ch1.basicPublish("", "bogus", false, true, null, "immediate".getBytes());
+        _ch1.txCommit();
         doBasicReturn(returnCell, AMQP.NO_CONSUMERS);
         returnCell = new BlockingCell<Object>();
         _ch1.txCommit();
         expect(2, drain(10, queueName, false));
 
-        /*
-          TODO: figure out what these tests are meant to do; they
-          currently break due to rollback no longer requeueing
-          delivered messages
-
-        String x = "txtest";
-        _ch1.exchangeDeclare(x, "direct", true);
-        String requestQueue = _ch1.queueDeclare("", true).getQueue();
-        String replyQueue = _ch1.queueDeclare("", true).getQueue();
-        _ch1.queueBind(requestQueue, x, requestQueue);
-        _ch1.queueBind(replyQueue, x, replyQueue);
-        publish2(x, requestQueue, "Request");
-        _ch1.txCommit();
-
-        expect(1, drain(10, requestQueue, false));
-        expect(0, drain(10, replyQueue, false));
-        _ch1.txRollback();
-
-        expect(1, drain(10, requestQueue, false));
-        expect(0, drain(10, replyQueue, false));
-        publish2(x, replyQueue, "Reply");
-        _ch1.txRollback();
-
-        waitForKey("Temp queues should have ONE REQUEST, no reply");
-
-        expect(1, drain(10, requestQueue, false));
-        expect(0, drain(10, replyQueue, false));
-        publish2(x, replyQueue, "Reply");
-        _ch1.txCommit();
-
-        waitForKey("Temp queues should have no request, ONE REPLY");
-
-        expect(0, drain(10, requestQueue, false));
-        expect(1, drain(10, replyQueue, false));
-        _ch1.txRollback();
-
-        expect(0, drain(10, requestQueue, false));
-        expect(1, drain(10, replyQueue, false));
-        _ch1.txCommit();
-
-        _ch1.queueDelete(requestQueue);
-        _ch1.queueDelete(replyQueue);
-
-        */
     }
 
 
