@@ -14,7 +14,6 @@
 //  Copyright (c) 2007-2011 VMware, Inc.  All rights reserved.
 //
 
-
 package com.rabbitmq.client.impl;
 
 import java.io.ByteArrayInputStream;
@@ -36,6 +35,7 @@ import com.rabbitmq.client.MalformedFrameException;
 
 /**
  * Represents an AMQP wire-protocol frame, with frame type, channel number, and payload bytes.
+ * TODO: make state private
  */
 public class Frame {
     /** Frame type code */
