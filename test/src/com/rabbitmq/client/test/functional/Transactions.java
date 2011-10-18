@@ -343,4 +343,24 @@ public class Transactions extends BrokerTestCase
         }
     }
 
+    public void testShuffleAcksBeforeRollback()
+        throws IOException
+    {
+        openChannel();
+        for (int i = 0; i < 3; i++) {
+            basicPublish();
+        }
+        txSelect();
+        long tags[] = new long[3];
+        for (int i = 0; i < 3; i++) {
+            tags[i] = basicGet().getEnvelope().getDeliveryTag();
+        }
+        basicAck(tags[2], false);
+        basicAck(tags[1], false);
+        txRollback();
+        basicAck(tags[0], true);
+        basicAck(tags[1], false);
+        basicAck(tags[2], false);
+        txCommit();
+    }
 }
