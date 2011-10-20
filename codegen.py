@@ -161,7 +161,6 @@ def genJavaApi(spec):
         print
         print "import com.rabbitmq.client.impl.ContentHeaderPropertyWriter;"
         print "import com.rabbitmq.client.impl.ContentHeaderPropertyReader;"
-        print "import com.rabbitmq.client.impl.LongString;"
         print "import com.rabbitmq.client.impl.LongStringHelper;"
 
     def printProtocolClass():
@@ -314,11 +313,11 @@ def genJavaApi(spec):
     def printPropertiesBuilder(c):
         print
         print "        public Builder builder() {"
-        print "            Builder builder = new Builder();"
+        print "            Builder builder = new Builder()"
         setFieldList = [ "%s(%s)" % (fn, fn)
                          for fn in [ java_field_name(f.name) for f in c.fields ]
                          ]
-        print "            builder.%s;" % ("\n                .".join(setFieldList))
+        print "                .%s;" % ("\n                .".join(setFieldList))
         print "            return builder;"
         print "        }"
 
@@ -370,6 +369,9 @@ def genJavaApi(spec):
         
         print "        }"
 
+        # default constructor
+        print "        public %sProperties() {}" % (jClassName)
+
         #class properties
         print "        public int getClassId() { return %i; }" % (c.index)
         print "        public String getClassName() { return \"%s\"; }" % (c.name)
@@ -419,6 +421,7 @@ def genJavaImpl(spec):
         print "import java.util.Map;"
         print
         print "import com.rabbitmq.client.AMQP;"
+        print "import com.rabbitmq.client.LongString;"
         print "import com.rabbitmq.client.UnknownClassOrMethodId;"
         print "import com.rabbitmq.client.UnexpectedMethodError;"
 
@@ -543,7 +546,7 @@ def genJavaImpl(spec):
             for m in c.allMethods():
                 fq_name = java_class_name(c.name) + '.' + java_class_name(m.name)
                 print "                    case %s: {" % (m.index)
-                print "                        return new %s(new MethodArgumentReader(in));" % (fq_name)
+                print "                        return new %s(new MethodArgumentReader(new ValueReader(in)));" % (fq_name)
                 print "                    }"
             print "                    default: break;"
             print "                } break;"

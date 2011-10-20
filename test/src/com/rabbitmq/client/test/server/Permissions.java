@@ -30,13 +30,12 @@ import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.QueueingConsumer;
 import com.rabbitmq.client.impl.AMQChannel;
-import com.rabbitmq.client.impl.AMQImpl;
 import com.rabbitmq.tools.Host;
 
 public class Permissions extends BrokerTestCase
 {
 
-    protected Channel adminCh;
+    private Channel adminCh;
 
     public Permissions()
     {
@@ -50,6 +49,7 @@ public class Permissions extends BrokerTestCase
     protected void setUp()
         throws IOException
     {
+        deleteRestrictedAccount();
         addRestrictedAccount();
         super.setUp();
     }
@@ -74,11 +74,11 @@ public class Permissions extends BrokerTestCase
     protected void deleteRestrictedAccount()
         throws IOException
     {
-        Host.rabbitmqctl("clear_permissions -p /test testadmin");
-        Host.rabbitmqctl("clear_permissions -p /test test");
-        Host.rabbitmqctl("delete_vhost /test");
-        Host.rabbitmqctl("delete_user testadmin");
-        Host.rabbitmqctl("delete_user test");
+        Host.rabbitmqctlIgnoreErrors("clear_permissions -p /test testadmin");
+        Host.rabbitmqctlIgnoreErrors("clear_permissions -p /test test");
+        Host.rabbitmqctlIgnoreErrors("delete_vhost /test");
+        Host.rabbitmqctlIgnoreErrors("delete_user testadmin");
+        Host.rabbitmqctlIgnoreErrors("delete_user test");
     }
 
     protected void createResources()
@@ -114,6 +114,7 @@ public class Permissions extends BrokerTestCase
         action.with("configure");
         action.with("write");
         action.with("read");
+        action.with("none");
     }
 
     public void testAuth()
@@ -142,10 +143,6 @@ public class Permissions extends BrokerTestCase
                 }});
         runConfigureTest(new WithName() {
                 public void with(String name) throws IOException {
-                    channel.exchangeDeclarePassive(name);
-                }});
-        runConfigureTest(new WithName() {
-                public void with(String name) throws IOException {
                     channel.exchangeDelete(name);
                 }});
     }
@@ -159,22 +156,29 @@ public class Permissions extends BrokerTestCase
                 }});
         runConfigureTest(new WithName() {
                 public void with(String name) throws IOException {
-                    channel.queueDeclarePassive(name);
-                }});
-        runConfigureTest(new WithName() {
-                public void with(String name) throws IOException {
                     channel.queueDelete(name);
+                }});
+    }
+
+    public void testPassiveDeclaration() throws IOException {
+        runTest(true, true, true, true, new WithName() {
+                public void with(String name) throws IOException {
+                    channel.exchangeDeclarePassive(name);
+                }});
+        runTest(true, true, true, true, new WithName() {
+                public void with(String name) throws IOException {
+                    channel.queueDeclarePassive(name);
                 }});
     }
 
     public void testBinding()
         throws IOException
     {
-        runTest(false, true, false, new WithName() {
+        runTest(false, true, false, false, new WithName() {
                 public void with(String name) throws IOException {
                     channel.queueBind(name, "read", "");
                 }});
-        runTest(false, false, true, new WithName() {
+        runTest(false, false, true, false, new WithName() {
                 public void with(String name) throws IOException {
                     channel.queueBind("write", name, "");
                 }});
@@ -183,7 +187,7 @@ public class Permissions extends BrokerTestCase
     public void testPublish()
         throws IOException
     {
-        runTest(false, true, false, new WithName() {
+        runTest(false, true, false, false, new WithName() {
                 public void with(String name) throws IOException {
                     channel.basicPublish(name, "", null, "foo".getBytes());
                     //followed by a dummy synchronous command in order
@@ -195,7 +199,7 @@ public class Permissions extends BrokerTestCase
     public void testGet()
         throws IOException
     {
-        runTest(false, false, true, new WithName() {
+        runTest(false, false, true, false, new WithName() {
                 public void with(String name) throws IOException {
                     channel.basicGet(name, true);
                 }});
@@ -204,7 +208,7 @@ public class Permissions extends BrokerTestCase
     public void testConsume()
         throws IOException
     {
-        runTest(false, false, true, new WithName() {
+        runTest(false, false, true, false, new WithName() {
                 public void with(String name) throws IOException {
                     channel.basicConsume(name, new QueueingConsumer(channel));
                 }});
@@ -213,20 +217,23 @@ public class Permissions extends BrokerTestCase
     public void testPurge()
         throws IOException
     {
-        runTest(false, false, true, new WithName() {
+        runTest(false, false, true, false, new WithName() {
                 public void with(String name) throws IOException {
-                    ((AMQChannel)channel).exnWrappingRpc(new AMQImpl.Queue.Purge(0, name, false));
+                    ((AMQChannel)channel)
+                    .exnWrappingRpc(new AMQP.Queue.Purge.Builder()
+                                                        .queue(name)
+                                    .build());
                 }});
     }
 
     public void testAltExchConfiguration()
         throws IOException
     {
-        runTest(false, false, false,
+        runTest(false, false, false, false,
                 createAltExchConfigTest("configure-me"));
-        runTest(false, false, false,
+        runTest(false, false, false, false,
                 createAltExchConfigTest("configure-and-write-me"));
-        runTest(false, true, false,
+        runTest(false, true, false, false,
                 createAltExchConfigTest("configure-and-read-me"));
     }
 
@@ -318,15 +325,17 @@ public class Permissions extends BrokerTestCase
         runTest(true, "configure-me", test);
         runTest(false, "write-me", test);
         runTest(false, "read-me", test);
+        runTest(false, "none", test);
     }
 
-    protected void runTest(boolean expC, boolean expW, boolean expR,
+    protected void runTest(boolean expC, boolean expW, boolean expR, boolean expN,
                            WithName test)
         throws IOException
     {
         runTest(expC, "configure", test);
         runTest(expW, "write", test);
         runTest(expR, "read", test);
+        runTest(expN, "none", test);
     }
 
     protected void assertAccessRefused(WithName test) throws IOException {
@@ -351,7 +360,7 @@ public class Permissions extends BrokerTestCase
         }
     }
 
-    public interface WithName {
+    private interface WithName {
         public void with(String name) throws IOException;
     }
 

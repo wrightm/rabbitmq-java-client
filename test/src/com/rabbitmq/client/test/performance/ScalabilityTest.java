@@ -284,7 +284,7 @@ public class ScalabilityTest {
         boolean mandatory = true;
         boolean immdediate = true;
         final CountDownLatch latch = new CountDownLatch(params.messageCount);
-        channel.setReturnListener(new ReturnListener() {
+        channel.addReturnListener(new ReturnListener() {
                 public void handleReturn(int replyCode, String replyText,
                                          String exchange, String routingKey,
                                          AMQP.BasicProperties properties, byte[] body) throws IOException {
@@ -327,7 +327,7 @@ public class ScalabilityTest {
 
         Parameters params = new Parameters();
         params.host          = cmd.getOptionValue("h", "0.0.0.0");
-        params.port          = CLIHelper.getOptionValue(cmd, "p", 5672);
+        params.port          = CLIHelper.getOptionValue(cmd, "p", AMQP.PROTOCOL.PORT);
         params.messageCount  = CLIHelper.getOptionValue(cmd, "n", 100);
         params.base          = CLIHelper.getOptionValue(cmd, "b", 10);
         params.maxQueueExp   = CLIHelper.getOptionValue(cmd, "x", 4);

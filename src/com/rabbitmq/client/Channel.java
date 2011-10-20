@@ -111,40 +111,61 @@ public interface Channel extends ShutdownNotifier {
     void abort(int closeCode, String closeMessage) throws IOException;
 
     /**
-     * Return the current {@link ReturnListener}.
-     * @return an interface to the current return listener
+     * Add a {@link ReturnListener}.
+     * @param listener the listener to add
      */
-    ReturnListener getReturnListener();
+    void addReturnListener(ReturnListener listener);
 
     /**
-     * Set the current {@link ReturnListener}.
-     * @param listener the listener to use, or null indicating "don't use one".
+     * Remove a {@link ReturnListener}.
+     * @param listener the listener to remove
+     * @return <code><b>true</b></code> if the listener was found and removed,
+     * <code><b>false</b></code> otherwise
      */
-    void setReturnListener(ReturnListener listener);
+    boolean removeReturnListener(ReturnListener listener);
 
     /**
-     * Return the current {@link FlowListener}.
-     * @return an interface to the current flow listener.
+     * Remove all {@link ReturnListener}s.
      */
-    FlowListener getFlowListener();
+    void clearReturnListeners();
 
     /**
-     * Set the current {@link FlowListener}.
-     * @param listener the listener to use, or null indicating "don't use one".
+     * Add a {@link FlowListener}.
+     * @param listener the listener to add
      */
-    void setFlowListener(FlowListener listener);
+    void addFlowListener(FlowListener listener);
 
     /**
-     * Return the current {@link ConfirmListener}.
-     * @return an interface to the current ack listener.
+     * Remove a {@link FlowListener}.
+     * @param listener the listener to remove
+     * @return <code><b>true</b></code> if the listener was found and removed,
+     * <code><b>false</b></code> otherwise
      */
-    ConfirmListener getConfirmListener();
+    boolean removeFlowListener(FlowListener listener);
 
     /**
-     * Set the current {@link ConfirmListener}.
-     * @param listener the listener to use, or null indicating "don't use one".
+     * Remove all {@link FlowListener}s.
      */
-    void setConfirmListener(ConfirmListener listener);
+    void clearFlowListeners();
+
+    /**
+     * Add a {@link ConfirmListener}.
+     * @param listener the listener to add
+     */
+    void addConfirmListener(ConfirmListener listener);
+
+    /**
+     * Remove a {@link ConfirmListener}.
+     * @param listener the listener to remove
+     * @return <code><b>true</b></code> if the listener was found and removed,
+     * <code><b>false</b></code> otherwise
+     */
+    boolean removeConfirmListener(ConfirmListener listener);
+
+    /**
+     * Remove all {@link ConfirmListener}s.
+     */
+    void clearConfirmListeners();
 
     /**
      * Get the current default consumer. @see setDefaultConsumer for rationale.
@@ -558,7 +579,7 @@ public interface Channel extends ShutdownNotifier {
      * @see com.rabbitmq.client.AMQP.Basic.Consume
      * @see com.rabbitmq.client.AMQP.Basic.ConsumeOk
      * @see #basicAck
-     * @see #basicConsume(String,boolean, String,boolean,boolean, Map, Consumer)
+     * @see #basicConsume(String, boolean, String, boolean, boolean, Map, Consumer)
      */
     String basicConsume(String queue, Consumer callback) throws IOException;
 
@@ -574,7 +595,7 @@ public interface Channel extends ShutdownNotifier {
      * @throws java.io.IOException if an error is encountered
      * @see com.rabbitmq.client.AMQP.Basic.Consume
      * @see com.rabbitmq.client.AMQP.Basic.ConsumeOk
-     * @see #basicConsume(String,boolean, String,boolean,boolean, Map, Consumer)
+     * @see #basicConsume(String, boolean, String, boolean, boolean, Map, Consumer)
      */
     String basicConsume(String queue, boolean autoAck, Consumer callback) throws IOException;
 
@@ -590,13 +611,13 @@ public interface Channel extends ShutdownNotifier {
      * @throws java.io.IOException if an error is encountered
      * @see com.rabbitmq.client.AMQP.Basic.Consume
      * @see com.rabbitmq.client.AMQP.Basic.ConsumeOk
-     * @see #basicConsume(String,boolean, String,boolean,boolean, Map, Consumer)
+     * @see #basicConsume(String, boolean, String, boolean, boolean, Map, Consumer)
      */
     String basicConsume(String queue, boolean autoAck, String consumerTag, Consumer callback) throws IOException;
 
     /**
      * Start a consumer. Calls the consumer's {@link Consumer#handleConsumeOk}
-     * method before returning.
+     * method.
      * @param queue the name of the queue
      * @param autoAck true if the server should consider messages
      * acknowledged once delivered; false if the server should expect
@@ -615,7 +636,7 @@ public interface Channel extends ShutdownNotifier {
 
     /**
      * Cancel a consumer. Calls the consumer's {@link Consumer#handleCancelOk}
-     * method before returning.
+     * method.
      * @param consumerTag a client- or server-generated consumer tag to establish context
      * @throws java.io.IOException if an error is encountered
      * @see com.rabbitmq.client.AMQP.Basic.Cancel
@@ -698,6 +719,21 @@ public interface Channel extends ShutdownNotifier {
     long getNextPublishSeqNo();
 
     /**
+     * Wait until all messages published since the last call have been
+     * either ack'd or nack'd by the broker.  Note, when called on a
+     * non-Confirm channel, waitForConfirms returns true immediately.
+     * @return whether all the messages were ack'd (and none were nack'd)
+     */
+    boolean waitForConfirms() throws InterruptedException;
+
+    /** Wait until all messages published since the last call have
+     * been either ack'd or nack'd by the broker.  If any of the
+     * messages were nack'd, waitForConfirmsOrDie will throw an
+     * IOException.  When called on a non-Confirm channel, it will
+     * return immediately. */
+    void waitForConfirmsOrDie() throws IOException, InterruptedException;
+
+    /**
      * Asynchronously send a method over this channel.
      * @param method method to transmit over this channel.
      * @throws IOException Problem transmitting method.
@@ -707,8 +743,8 @@ public interface Channel extends ShutdownNotifier {
     /**
      * Synchronously send a method over this channel.
      * @param method method to transmit over this channel.
-     * @return response to method. Caller should cast as appropriate.
+     * @return command response to method. Caller should cast as appropriate.
      * @throws IOException Problem transmitting method.
      */
-    Method rpc(Method method) throws IOException;
+    Command rpc(Method method) throws IOException;
 }

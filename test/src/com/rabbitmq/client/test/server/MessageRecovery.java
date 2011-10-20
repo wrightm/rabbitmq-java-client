@@ -12,23 +12,30 @@
 //
 //  The Initial Developer of the Original Code is VMware, Inc.
 //  Copyright (c) 2007-2011 VMware, Inc.  All rights reserved.
-//
 
-
-package com.rabbitmq.client.test.functional;
+package com.rabbitmq.client.test.server;
 
 import com.rabbitmq.client.MessageProperties;
-import com.rabbitmq.client.AMQP.BasicProperties;
+import com.rabbitmq.client.test.ConfirmBase;
 
-public class PersistentTransactions extends TransactionsBase {
+public class MessageRecovery extends ConfirmBase
+{
 
-    protected BasicProperties getMessageProperties() {
-        return MessageProperties.PERSISTENT_TEXT_PLAIN;
-    }
+    private final static String Q = "recovery-test";
 
-    @Override
-    protected boolean declareQueuesDurable() {
-        return true;
+    public void testMessageRecovery()
+        throws Exception
+    {
+        channel.confirmSelect();
+        channel.queueDeclare(Q, true, false, false, null);
+        channel.basicPublish("", Q, false, false,
+                             MessageProperties.PERSISTENT_BASIC,
+                             "nop".getBytes());
+        waitForConfirms();
+
+        restart();
+        assertDelivered(Q, 1);
+        channel.queueDelete(Q);
     }
 
 }

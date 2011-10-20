@@ -64,10 +64,9 @@ public class MulticastMain {
                 System.exit(0);
             }
 
-            String hostName      = strArg(cmd, 'h', "localhost");
-            int portNumber       = intArg(cmd, 'p', AMQP.PROTOCOL.PORT);
             String exchangeType  = strArg(cmd, 't', "direct");
             String exchangeName  = strArg(cmd, 'e', exchangeType);
+            String queueName     = strArg(cmd, 'u', "");
             int samplingInterval = intArg(cmd, 'i', 1);
             int rateLimit        = intArg(cmd, 'r', 0);
             int producerCount    = intArg(cmd, 'x', 1);
@@ -82,18 +81,16 @@ public class MulticastMain {
             List<?> flags        = lstArg(cmd, 'f');
             int frameMax         = intArg(cmd, 'M', 0);
             int heartbeat        = intArg(cmd, 'b', 0);
+            String uri           = strArg(cmd, 'h', "amqp://localhost");
 
-            if ((producerTxSize > 0) && confirm >= 0) {
-                throw new ParseException("Cannot select both producerTxSize"+
-                                         " and confirm");
-            }
+            boolean exclusive  = "".equals(queueName);
+            boolean autoDelete = !exclusive;
 
             //setup
             String id = UUID.randomUUID().toString();
             Stats stats = new Stats(1000L * samplingInterval);
             ConnectionFactory factory = new ConnectionFactory();
-            factory.setHost(hostName);
-            factory.setPort(portNumber);
+            factory.setUri(uri);
             factory.setRequestedFrameMax(frameMax);
             factory.setRequestedHeartbeat(heartbeat);
 
@@ -106,13 +103,15 @@ public class MulticastMain {
                 Channel channel = conn.createChannel();
                 if (consumerTxSize > 0) channel.txSelect();
                 channel.exchangeDeclare(exchangeName, exchangeType);
-                String queueName =
-                        channel.queueDeclare("", flags.contains("persistent"),
-                                             true, false, null).getQueue();
+                String qName =
+                        channel.queueDeclare(queueName,
+                                             flags.contains("persistent"),
+                                             exclusive, autoDelete,
+                                             null).getQueue();
                 QueueingConsumer consumer = new QueueingConsumer(channel);
                 if (prefetchCount > 0) channel.basicQos(prefetchCount);
-                channel.basicConsume(queueName, autoAck, consumer);
-                channel.queueBind(queueName, exchangeName, id);
+                channel.basicConsume(qName, autoAck, consumer);
+                channel.queueBind(qName, exchangeName, id);
                 Thread t =
                     new Thread(new Consumer(consumer, id,
                                             consumerTxSize, autoAck,
@@ -122,11 +121,13 @@ public class MulticastMain {
             }
             Thread[] producerThreads = new Thread[producerCount];
             Connection[] producerConnections = new Connection[producerCount];
+            Channel[] producerChannels = new Channel[producerCount];
             for (int i = 0; i < producerCount; i++) {
                 System.out.println("starting producer #" + i);
                 Connection conn = factory.newConnection();
                 producerConnections[i] = conn;
                 Channel channel = conn.createChannel();
+                producerChannels[i] = channel;
                 if (producerTxSize > 0) channel.txSelect();
                 if (confirm >= 0) channel.confirmSelect();
                 channel.exchangeDeclare(exchangeName, exchangeType);
@@ -135,8 +136,8 @@ public class MulticastMain {
                                                 1000L * samplingInterval,
                                                 rateLimit, minMsgSize, timeLimit,
                                                 confirm);
-                channel.setReturnListener(p);
-                channel.setConfirmListener(p);
+                channel.addReturnListener(p);
+                channel.addConfirmListener(p);
                 Thread t = new Thread(p);
                 producerThreads[i] = t;
                 t.start();
@@ -144,6 +145,8 @@ public class MulticastMain {
 
             for (int i = 0; i < producerCount; i++) {
                 producerThreads[i].join();
+                producerChannels[i].clearReturnListeners();
+                producerChannels[i].clearConfirmListeners();
                 producerConnections[i].close();
             }
 
@@ -171,10 +174,10 @@ public class MulticastMain {
     private static Options getOptions() {
         Options options = new Options();
         options.addOption(new Option("?", "help",      false,"show usage"));
-        options.addOption(new Option("h", "host",      true, "broker host"));
-        options.addOption(new Option("p", "port",      true, "broker port"));
+        options.addOption(new Option("h", "uri",       true, "AMQP URI"));
         options.addOption(new Option("t", "type",      true, "exchange type"));
         options.addOption(new Option("e", "exchange",  true, "exchange name"));
+        options.addOption(new Option("u", "queue",     true, "queue name"));
         options.addOption(new Option("i", "interval",  true, "sampling interval"));
         options.addOption(new Option("r", "rate",      true, "rate limit"));
         options.addOption(new Option("x", "producers", true, "producer count"));

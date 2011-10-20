@@ -27,13 +27,13 @@ import java.util.List;
 
 import org.apache.commons.io.IOUtils;
 
+import com.rabbitmq.client.LongString;
+
 /**
- * Helper class to generates AMQP wire-protocol encoded values.
+ * Helper class to generate AMQP wire-protocol encoded values.
  */
 public class ValueWriter
 {
-
-    /** Accumulates our output */
     private final DataOutputStream out;
 
     public ValueWriter(DataOutputStream out)
@@ -107,7 +107,7 @@ public class ValueWriter
             out.writeInt(0);
         } else {
             out.writeInt((int)Frame.tableSize(table));
-            for(Map.Entry<String,Object> entry:  table.entrySet()) {
+            for(Map.Entry<String,Object> entry: table.entrySet()) {
                 writeShortstr(entry.getKey());
                 Object value = entry.getValue();
                 writeFieldValue(value);
@@ -195,7 +195,7 @@ public class ValueWriter
         }
     }
 
-    public void writeArray(List<?> value)
+    public final void writeArray(List<?> value)
         throws IOException
     {
         if (value==null) {

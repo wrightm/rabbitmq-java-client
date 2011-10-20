@@ -31,13 +31,14 @@ import com.rabbitmq.client.ShutdownSignalException;
 import com.rabbitmq.client.AlreadyClosedException;
 import com.rabbitmq.client.impl.ShutdownNotifierComponent;
 import com.rabbitmq.client.AMQP;
+import com.rabbitmq.tools.Host;
 
 public class BrokerTestCase extends TestCase
 {
-    public ConnectionFactory connectionFactory = new ConnectionFactory();
+    protected ConnectionFactory connectionFactory = new ConnectionFactory();
 
-    public Connection connection;
-    public Channel channel;
+    protected Connection connection;
+    protected Channel channel;
 
     protected void setUp()
         throws IOException
@@ -80,6 +81,14 @@ public class BrokerTestCase extends TestCase
     protected void releaseResources()
         throws IOException
     {}
+
+    protected void restart()
+        throws IOException
+    {
+        tearDown();
+        Host.executeCommand("cd ../rabbitmq-test; make restart-app");
+        setUp();
+    }
 
     public void openConnection()
         throws IOException

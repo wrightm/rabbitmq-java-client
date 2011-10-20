@@ -18,6 +18,8 @@
 package com.rabbitmq.client.test.functional;
 
 import com.rabbitmq.client.test.Bug20004Test;
+import com.rabbitmq.client.test.impl.WorkPoolTests;
+
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
@@ -33,7 +35,6 @@ public class FunctionalTests extends TestCase {
         suite.addTestSuite(Recover.class);
         suite.addTestSuite(Reject.class);
         suite.addTestSuite(Transactions.class);
-        suite.addTestSuite(PersistentTransactions.class);
         suite.addTestSuite(RequeueOnConnectionClose.class);
         suite.addTestSuite(RequeueOnChannelClose.class);
         suite.addTestSuite(DurableOnTransient.class);
@@ -61,6 +62,7 @@ public class FunctionalTests extends TestCase {
         suite.addTestSuite(UserIDHeader.class);
         suite.addTestSuite(InternalExchange.class);
         suite.addTestSuite(CcRoutes.class);
+        suite.addTestSuite(WorkPoolTests.class);
         return suite;
     }
 }
