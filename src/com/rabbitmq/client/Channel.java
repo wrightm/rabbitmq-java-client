@@ -18,6 +18,7 @@ package com.rabbitmq.client;
 
 import java.io.IOException;
 import java.util.Map;
+import java.util.concurrent.TimeoutException;
 
 import com.rabbitmq.client.AMQP.BasicProperties;
 import com.rabbitmq.client.AMQP.Exchange;
@@ -638,7 +639,7 @@ public interface Channel extends ShutdownNotifier {
      * Cancel a consumer. Calls the consumer's {@link Consumer#handleCancelOk}
      * method.
      * @param consumerTag a client- or server-generated consumer tag to establish context
-     * @throws java.io.IOException if an error is encountered
+     * @throws IOException if an error is encountered, or if the consumerTag is unknown
      * @see com.rabbitmq.client.AMQP.Basic.Cancel
      * @see com.rabbitmq.client.AMQP.Basic.CancelOk
      */
@@ -649,12 +650,12 @@ public interface Channel extends ShutdownNotifier {
      * basic.recover is asynchronous; in 0-9-1 it is synchronous, and
      * the new, deprecated method basic.recover_async is asynchronous.
      * <p/>
-     * Equivalent to calling <code>basicRecover(true)</code>, messages 
-     * will be requeued and possibly delivered to a different consumer. 
+     * Equivalent to calling <code>basicRecover(true)</code>, messages
+     * will be requeued and possibly delivered to a different consumer.
      * @see #basicRecover(boolean)
      */
      Basic.RecoverOk basicRecover() throws IOException;
-  
+
     /**
      * Ask the broker to resend unacknowledged messages.  In 0-8
      * basic.recover is asynchronous; in 0-9-1 it is synchronous, and
@@ -726,12 +727,30 @@ public interface Channel extends ShutdownNotifier {
      */
     boolean waitForConfirms() throws InterruptedException;
 
+    /**
+     * Wait until all messages published since the last call have been
+     * either ack'd or nack'd by the broker; or until timeout elapses.
+     * If the timeout expires a TimeoutException is thrown.  When
+     * called on a non-Confirm channel, waitForConfirms returns true
+     * immediately.
+     * @return whether all the messages were ack'd (and none were nack'd)
+     */
+    boolean waitForConfirms(long timeout) throws InterruptedException, TimeoutException;
+
     /** Wait until all messages published since the last call have
      * been either ack'd or nack'd by the broker.  If any of the
      * messages were nack'd, waitForConfirmsOrDie will throw an
      * IOException.  When called on a non-Confirm channel, it will
      * return immediately. */
     void waitForConfirmsOrDie() throws IOException, InterruptedException;
+
+    /** Wait until all messages published since the last call have
+     * been either ack'd or nack'd by the broker; or until timeout elapses.
+     * If the timeout expires a TimeoutException is thrown.  If any of the
+     * messages were nack'd, waitForConfirmsOrDie will throw an
+     * IOException.  When called on a non-Confirm channel, it will
+     * return immediately. */
+    void waitForConfirmsOrDie(long timeout) throws IOException, InterruptedException, TimeoutException;
 
     /**
      * Asynchronously send a method over this channel.
