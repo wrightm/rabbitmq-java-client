@@ -11,7 +11,7 @@
 //  The Original Code is RabbitMQ.
 //
 //  The Initial Developer of the Original Code is VMware, Inc.
-//  Copyright (c) 2007-2011 VMware, Inc.  All rights reserved.
+//  Copyright (c) 2007-2012 VMware, Inc.  All rights reserved.
 //
 
 package com.rabbitmq.client.impl;
@@ -59,7 +59,7 @@ public final class ChannelManager {
         }
         _channelMax = channelMax;
         channelNumberAllocator = new IntAllocator(1, channelMax);
-        
+
         this.workService = workService;
     }
 
