@@ -11,7 +11,7 @@
 //  The Original Code is RabbitMQ.
 //
 //  The Initial Developer of the Original Code is VMware, Inc.
-//  Copyright (c) 2007-2011 VMware, Inc.  All rights reserved.
+//  Copyright (c) 2007-2012 VMware, Inc.  All rights reserved.
 //
 
 package com.rabbitmq.client.impl;
@@ -72,7 +72,7 @@ public class AMQConnection extends ShutdownNotifierComponent implements Connecti
                 "version", LongStringHelper.asLongString(ClientVersion.VERSION),
                 "platform", LongStringHelper.asLongString("Java"),
                 "copyright", LongStringHelper.asLongString(
-                    "Copyright (C) 2007-2011 VMware, Inc."),
+                    "Copyright (C) 2007-2012 VMware, Inc."),
                 "information", LongStringHelper.asLongString(
                     "Licensed under the MPL. See http://www.rabbitmq.com/"),
                 "capabilities", capabilities
@@ -578,9 +578,7 @@ public class AMQConnection extends ShutdownNotifierComponent implements Connecti
                 // Already shutting down, so just send back a CloseOk.
                 try {
                     _channel0.quiescingTransmit(new AMQP.Connection.CloseOk.Builder().build());
-                } catch (IOException ioe) {
-                    Utility.emptyStatement();
-                }
+                } catch (IOException _) { } // ignore
                 return true;
             } else if (method instanceof AMQP.Connection.CloseOk) {
                 // It's our final "RPC". Time to shut down.
@@ -599,9 +597,7 @@ public class AMQConnection extends ShutdownNotifierComponent implements Connecti
         ShutdownSignalException sse = shutdown(closeCommand, false, null, false);
         try {
             _channel0.quiescingTransmit(new AMQP.Connection.CloseOk.Builder().build());
-        } catch (IOException ioe) {
-            Utility.emptyStatement();
-        }
+        } catch (IOException _) { } // ignore
         _brokerInitiatedShutdown = true;
         Thread scw = new SocketCloseWait(sse);
         scw.setName("AMQP Connection Closing Monitor " +
@@ -708,9 +704,7 @@ public class AMQConnection extends ShutdownNotifierComponent implements Connecti
     {
         try {
             close(closeCode, closeMessage, true, null, timeout, true);
-        } catch (IOException e) {
-            Utility.emptyStatement();
-        }
+        } catch (IOException _) { } // ignore
     }
 
     /**

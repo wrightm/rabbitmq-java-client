@@ -11,7 +11,7 @@
 //  The Original Code is RabbitMQ.
 //
 //  The Initial Developer of the Original Code is VMware, Inc.
-//  Copyright (c) 2007-2011 VMware, Inc.  All rights reserved.
+//  Copyright (c) 2007-2012 VMware, Inc.  All rights reserved.
 //
 
 package com.rabbitmq.client.impl;
@@ -146,7 +146,7 @@ public class AMQCommand implements Command {
             if (suppressBody) {
                 return new StringBuilder().append(body.length).append(" bytes of payload");
             } else {
-                return new StringBuilder().append('\"').append(body).append('\"');
+                return new StringBuilder().append('\"').append(new String(body, "UTF-8")).append('\"');
             }
         } catch (Exception e) {
             return new StringBuilder().append('|').append(body.length).append('|');
