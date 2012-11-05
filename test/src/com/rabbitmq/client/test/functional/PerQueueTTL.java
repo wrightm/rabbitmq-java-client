@@ -32,9 +32,9 @@ import java.util.Map;
  */
 public class PerQueueTTL extends BrokerTestCase {
 
-    private static final String TTL_EXCHANGE           = "ttl.exchange";
-    private static final String TTL_ARG                = "x-message-ttl";
-    private static final String TTL_QUEUE_NAME         = "queue.ttl";
+    private static final String TTL_EXCHANGE = "ttl.exchange";
+    private static final String TTL_ARG = "x-message-ttl";
+    private static final String TTL_QUEUE_NAME = "queue.ttl";
     private static final String TTL_INVALID_QUEUE_NAME = "invalid.queue.ttl";
 
     private static final String[] MSG = {"one", "two", "three"};
@@ -50,13 +50,13 @@ public class PerQueueTTL extends BrokerTestCase {
     }
 
     public void testCreateQueueTTLTypes() throws IOException {
-        Object[] args = { (byte)200, (short)200, 200, 200L };
+        Object[] args = {(byte) 200, (short) 200, 200, 200L};
         for (Object ttl : args) {
             try {
                 declareQueue(ttl);
-            } catch(IOException ex) {
+            } catch (IOException ex) {
                 fail("Should be able to use " + ttl.getClass().getName() +
-                     " for x-message-ttl");
+                        " for x-message-ttl");
             }
         }
     }
@@ -92,24 +92,24 @@ public class PerQueueTTL extends BrokerTestCase {
         try {
             declareQueue(20);
             fail("Should not be able to redeclare with different x-message-ttl");
-        } catch(IOException ex) {
+        } catch (IOException ex) {
             checkShutdownSignal(AMQP.PRECONDITION_FAILED, ex);
         }
     }
 
     public void testQueueRedeclareSemanticEquivalence() throws Exception {
-        declareQueue((byte)10);
+        declareQueue((byte) 10);
         declareQueue(10);
-        declareQueue((short)10);
+        declareQueue((short) 10);
         declareQueue(10L);
     }
 
-    public void testQueueRedeclareSemanticNonEquivalence() throws Exception {
+    public void testQueueReDeclareSemanticNonEquivalence() throws Exception {
         declareQueue(10);
         try {
             declareQueue(10.0);
             fail("Should not be able to redeclare with x-message-ttl argument of different type");
-        } catch(IOException ex) {
+        } catch (IOException ex) {
             checkShutdownSignal(AMQP.PRECONDITION_FAILED, ex);
         }
     }
@@ -154,7 +154,7 @@ public class PerQueueTTL extends BrokerTestCase {
     }
 
     /*
-     * Test expiry of requeued messages
+     * Test expiry of re-queued messages
      */
     public void testExpiryWithRequeue() throws Exception {
         declareAndBindQueue(200);
@@ -176,7 +176,7 @@ public class PerQueueTTL extends BrokerTestCase {
     }
 
     /*
-     * Test expiry of requeued messages after being consumed instantly
+     * Test expiry of re-queued messages after being consumed instantly
      */
     public void testExpiryWithRequeueAfterConsume() throws Exception {
         declareAndBindQueue(100);
@@ -207,7 +207,7 @@ public class PerQueueTTL extends BrokerTestCase {
         Delivery d = c.nextDelivery(100);
         assertNotNull(d);
 
-        // requeued messages should expire
+        // re-queued messages should expire
         channel.basicReject(d.getEnvelope().getDeliveryTag(), true);
         assertNull(c.nextDelivery(100));
     }
@@ -238,7 +238,7 @@ public class PerQueueTTL extends BrokerTestCase {
     private void expectBodyAndRemainingMessages(String body, int messagesLeft) throws IOException {
         GetResponse response = channel.basicGet(TTL_QUEUE_NAME, false);
         assertEquals(body, new String(response.getBody()));
-        assertEquals(messagesLeft,  response.getMessageCount());
+        assertEquals(messagesLeft, response.getMessageCount());
     }
 
 }
