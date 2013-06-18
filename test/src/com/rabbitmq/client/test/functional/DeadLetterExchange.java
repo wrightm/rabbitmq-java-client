@@ -1,8 +1,12 @@
 package com.rabbitmq.client.test.functional;
 
 import com.rabbitmq.client.AMQP;
+import com.rabbitmq.client.AMQP.BasicProperties;
 import com.rabbitmq.client.Channel;
+import com.rabbitmq.client.DefaultConsumer;
+import com.rabbitmq.client.Envelope;
 import com.rabbitmq.client.GetResponse;
+import com.rabbitmq.client.MessageProperties;
 import com.rabbitmq.client.QueueingConsumer;
 import com.rabbitmq.client.QueueingConsumer.Delivery;
 import com.rabbitmq.client.test.BrokerTestCase;
@@ -15,6 +19,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 public class DeadLetterExchange extends BrokerTestCase {
     public static final String DLX = "dead.letter.exchange";
@@ -168,6 +174,35 @@ public class DeadLetterExchange extends BrokerTestCase {
         consumeN(DLQ, MSG_COUNT, WithResponse.NULL);
     }
 
+    public void testDeadLetterPerMessageTTLRemoved() throws Exception {
+        declareQueue(TEST_QUEUE_NAME, DLX, null, null, 1);
+        channel.queueBind(TEST_QUEUE_NAME, "amq.direct", "test");
+        channel.queueBind(DLQ, DLX, "test");
+
+        final BasicProperties props = MessageProperties.BASIC.builder().expiration("100").build();
+        publish(props, "test message");
+
+        // The message's expiration property should have been removed, thus
+        // after 100ms of hitting the queue, the message should get routed to
+        // the DLQ *AND* should remain there, not getting removed after a subsequent
+        // wait time > 100ms
+        sleep(500);
+        consumeN(DLQ, 1, new WithResponse() {
+                @SuppressWarnings("unchecked")
+                public void process(GetResponse getResponse) {
+                    assertNull(getResponse.getProps().getExpiration());
+                    Map<String, Object> headers = getResponse.getProps().getHeaders();
+                    assertNotNull(headers);
+                    ArrayList<Object> death = (ArrayList<Object>)headers.get("x-death");
+                    assertNotNull(death);
+                    assertDeathReason(death, 0, TEST_QUEUE_NAME, "expired");
+                    final Map<String, Object> deathHeader =
+                        (Map<String, Object>)death.get(0);
+                    assertEquals("100", deathHeader.get("original-expiration").toString());
+                }
+            });
+    }
+
     public void testDeadLetterExchangeDeleteTwice()
         throws IOException
     {
@@ -264,6 +299,28 @@ public class DeadLetterExchange extends BrokerTestCase {
 
         // The messages will NOT be dead-lettered to self.
         consumeN(TEST_QUEUE_NAME, 0, WithResponse.NULL);
+    }
+
+    public void testDeadLetterCycle() throws Exception {
+        // testDeadLetterTwice and testDeadLetterSelf both test that we drop
+        // messages in pure-expiry cycles. So we just need to test that
+        // non-pure-expiry cycles do not drop messages.
+
+        declareQueue("queue1", "", "queue2", null, 1);
+        declareQueue("queue2", "", "queue1", null, 0);
+
+        channel.basicPublish("", "queue1", MessageProperties.BASIC, "".getBytes());
+        final CountDownLatch latch = new CountDownLatch(10);
+        channel.basicConsume("queue2", false,
+            new DefaultConsumer(channel) {
+                @Override
+                public void handleDelivery(String consumerTag, Envelope envelope,
+                                           AMQP.BasicProperties properties, byte[] body) throws IOException {
+                    channel.basicReject(envelope.getDeliveryTag(), false);
+                    latch.countDown();
+                }
+            });
+        assertTrue(latch.await(10, TimeUnit.SECONDS));
     }
 
     public void testDeadLetterNewRK() throws Exception {
