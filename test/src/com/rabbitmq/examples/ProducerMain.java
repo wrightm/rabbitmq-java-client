@@ -20,11 +20,11 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-import com.rabbitmq.client.Channel;
-import com.rabbitmq.client.Connection;
-import com.rabbitmq.client.ConnectionFactory;
-import com.rabbitmq.client.MessageProperties;
-import com.rabbitmq.client.AMQP.BasicProperties;
+import com.rabbitmq.client3.Channel;
+import com.rabbitmq.client3.Connection;
+import com.rabbitmq.client3.ConnectionFactory;
+import com.rabbitmq.client3.MessageProperties;
+import com.rabbitmq.client3.AMQP.BasicProperties;
 
 public class ProducerMain implements Runnable {
     public static final int SUMMARY_EVERY_MS = 1000;

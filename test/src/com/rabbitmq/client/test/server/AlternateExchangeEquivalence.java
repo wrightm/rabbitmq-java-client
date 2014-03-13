@@ -15,13 +15,13 @@
 //
 
 
-package com.rabbitmq.client.test.server;
+package com.rabbitmq.client3.test.server;
 
 import java.util.Map;
 import java.util.HashMap;
 import java.io.IOException;
 
-import com.rabbitmq.client.test.functional.ExchangeEquivalenceBase;
+import com.rabbitmq.client3.test.functional.ExchangeEquivalenceBase;
 
 public class AlternateExchangeEquivalence extends ExchangeEquivalenceBase {
     static Map<String, Object> args = new HashMap<String, Object>();

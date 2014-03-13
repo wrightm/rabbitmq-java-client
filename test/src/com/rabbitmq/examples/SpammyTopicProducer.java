@@ -18,9 +18,9 @@ package com.rabbitmq.examples;
 
 import java.util.Random;
 
-import com.rabbitmq.client.Channel;
-import com.rabbitmq.client.Connection;
-import com.rabbitmq.client.ConnectionFactory;
+import com.rabbitmq.client3.Channel;
+import com.rabbitmq.client3.Connection;
+import com.rabbitmq.client3.ConnectionFactory;
 
 /**
  * This producer creates messages with constantly changing topic keys, sending as

@@ -1,8 +1,8 @@
-package com.rabbitmq.client.test.functional;
+package com.rabbitmq.client3.test.functional;
 
-import com.rabbitmq.client.AlreadyClosedException;
-import com.rabbitmq.client.Channel;
-import com.rabbitmq.client.test.BrokerTestCase;
+import com.rabbitmq.client3.AlreadyClosedException;
+import com.rabbitmq.client3.Channel;
+import com.rabbitmq.client3.test.BrokerTestCase;
 
 import java.io.IOException;
 

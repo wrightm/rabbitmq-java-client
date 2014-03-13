@@ -14,14 +14,14 @@
 //  Copyright (c) 2007-2013 GoPivotal, Inc.  All rights reserved.
 //
 
-package com.rabbitmq.client.test.server;
+package com.rabbitmq.client3.test.server;
 
 import java.io.IOException;
 
-import com.rabbitmq.client.Channel;
-import com.rabbitmq.client.Connection;
-import com.rabbitmq.client.QueueingConsumer;
-import com.rabbitmq.client.test.BrokerTestCase;
+import com.rabbitmq.client3.Channel;
+import com.rabbitmq.client3.Connection;
+import com.rabbitmq.client3.QueueingConsumer;
+import com.rabbitmq.client3.test.BrokerTestCase;
 import com.rabbitmq.tools.Host;
 
 public class MemoryAlarms extends BrokerTestCase {

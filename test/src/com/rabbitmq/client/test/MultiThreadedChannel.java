@@ -14,9 +14,9 @@
 //  Copyright (c) 2007-2013 GoPivotal, Inc.  All rights reserved.
 //
 
-package com.rabbitmq.client.test;
+package com.rabbitmq.client3.test;
 
-import com.rabbitmq.client.test.BrokerTestCase;
+import com.rabbitmq.client3.test.BrokerTestCase;
 
 import java.util.concurrent.atomic.AtomicReference;
 

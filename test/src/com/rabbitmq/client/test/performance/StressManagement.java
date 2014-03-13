@@ -14,13 +14,13 @@
 //  Copyright (c) 2007-2013 GoPivotal, Inc.  All rights reserved.
 //
 
-package com.rabbitmq.client.test.performance;
+package com.rabbitmq.client3.test.performance;
 
-import com.rabbitmq.client.AMQP;
-import com.rabbitmq.client.Channel;
-import com.rabbitmq.client.Connection;
-import com.rabbitmq.client.ConnectionFactory;
-import com.rabbitmq.client.MessageProperties;
+import com.rabbitmq.client3.AMQP;
+import com.rabbitmq.client3.Channel;
+import com.rabbitmq.client3.Connection;
+import com.rabbitmq.client3.ConnectionFactory;
+import com.rabbitmq.client3.MessageProperties;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
 

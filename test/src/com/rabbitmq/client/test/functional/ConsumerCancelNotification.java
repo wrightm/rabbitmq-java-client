@@ -14,15 +14,15 @@
 //  Copyright (c) 2007-2013 GoPivotal, Inc.  All rights reserved.
 //
 
-package com.rabbitmq.client.test.functional;
+package com.rabbitmq.client3.test.functional;
 
-import com.rabbitmq.client.Channel;
-import com.rabbitmq.client.Consumer;
-import com.rabbitmq.client.DefaultConsumer;
-import com.rabbitmq.client.ConsumerCancelledException;
-import com.rabbitmq.client.QueueingConsumer;
-import com.rabbitmq.client.ShutdownSignalException;
-import com.rabbitmq.client.test.BrokerTestCase;
+import com.rabbitmq.client3.Channel;
+import com.rabbitmq.client3.Consumer;
+import com.rabbitmq.client3.DefaultConsumer;
+import com.rabbitmq.client3.ConsumerCancelledException;
+import com.rabbitmq.client3.QueueingConsumer;
+import com.rabbitmq.client3.ShutdownSignalException;
+import com.rabbitmq.client3.test.BrokerTestCase;
 
 import java.io.IOException;
 import java.util.concurrent.ArrayBlockingQueue;

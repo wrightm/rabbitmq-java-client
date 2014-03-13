@@ -15,7 +15,7 @@
 //
 
 
-package com.rabbitmq.client.test;
+package com.rabbitmq.client3.test;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -30,12 +30,12 @@ import java.util.Map;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-import com.rabbitmq.client.impl.Frame;
-import com.rabbitmq.client.impl.LongStringHelper;
-import com.rabbitmq.client.impl.MethodArgumentReader;
-import com.rabbitmq.client.impl.MethodArgumentWriter;
-import com.rabbitmq.client.impl.ValueReader;
-import com.rabbitmq.client.impl.ValueWriter;
+import com.rabbitmq.client3.impl.Frame;
+import com.rabbitmq.client3.impl.LongStringHelper;
+import com.rabbitmq.client3.impl.MethodArgumentReader;
+import com.rabbitmq.client3.impl.MethodArgumentWriter;
+import com.rabbitmq.client3.impl.ValueReader;
+import com.rabbitmq.client3.impl.ValueWriter;
 
 public class TableTest
     extends TestCase

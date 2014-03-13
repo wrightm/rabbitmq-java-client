@@ -44,14 +44,14 @@
 
   <target name="amqp-generate" depends="amqp-generate-check"
     unless="amqp.generate.notRequired" description="generate AMQP.java and AMQImpl.java from AMQP spec">
-    <mkdir dir="${src.generated}/com/rabbitmq/client/"/>
+    <mkdir dir="${src.generated}/com/rabbitmq/client3/"/>
     <exec dir="." executable="${python.bin}"
     	  errorproperty="amqp.generate.error1"
           resultproperty="amqp.generate.result1">
       <arg line="codegen.py"/>
       <arg line="header"/>
       <arg line="${AMQP_SPEC_JSON_PATH}"/>
-      <arg line="${src.generated}/com/rabbitmq/client/AMQP.java"/>
+      <arg line="${src.generated}/com/rabbitmq/client3/AMQP.java"/>
     </exec>
   	<fail message="Generation of AMQP.java failed with message:${line.separator}${amqp.generate.error1}">
         <condition>
@@ -60,14 +60,14 @@
             </not>
         </condition>
     </fail>
-    <mkdir dir="${src.generated}/com/rabbitmq/client/impl"/>
+    <mkdir dir="${src.generated}/com/rabbitmq/client3/impl"/>
     <exec dir="." executable="${python.bin}"
           errorproperty="amqp.generate.error2"
           resultproperty="amqp.generate.result2">
       <arg line="codegen.py"/>
       <arg line="body"/>
       <arg line="${AMQP_SPEC_JSON_PATH}"/>
-      <arg line="${src.generated}/com/rabbitmq/client/impl/AMQImpl.java"/>
+      <arg line="${src.generated}/com/rabbitmq/client3/impl/AMQImpl.java"/>
     </exec>
   	<fail message="Generation of AMQPImpl.java failed with message:${line.separator}${amqp.generate.error2}">
         <condition>
@@ -80,8 +80,8 @@
 
   <target name="build" depends="amqp-generate" description="Build the client library.">
     <mkdir dir="${javac.out}"/>
-    <copy file="src/com/rabbitmq/client/impl/ClientVersion.java.in"
-	  tofile="${src.generated}/com/rabbitmq/client/impl/ClientVersion.java">
+    <copy file="src/com/rabbitmq/client3/impl/ClientVersion.java.in"
+	  tofile="${src.generated}/com/rabbitmq/client3/impl/ClientVersion.java">
       <filterset>
 	<filter token="VERSION" value="${impl.version}"/>
       </filterset>

@@ -14,14 +14,14 @@
 //  Copyright (c) 2007-2013 GoPivotal, Inc.  All rights reserved.
 //
 
-package com.rabbitmq.client.test.ssl;
+package com.rabbitmq.client3.test.ssl;
 
 import java.io.IOException;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 
-import com.rabbitmq.client.GetResponse;
-import com.rabbitmq.client.test.BrokerTestCase;
+import com.rabbitmq.client3.GetResponse;
+import com.rabbitmq.client3.test.BrokerTestCase;
 
 /**
  * Test for bug 19356 - SSL Support in rabbitmq

@@ -32,11 +32,11 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import com.rabbitmq.client.AMQP;
-import com.rabbitmq.client.impl.AMQCommand;
-import com.rabbitmq.client.impl.AMQContentHeader;
-import com.rabbitmq.client.impl.AMQImpl;
-import com.rabbitmq.client.impl.Frame;
+import com.rabbitmq.client3.AMQP;
+import com.rabbitmq.client3.impl.AMQCommand;
+import com.rabbitmq.client3.impl.AMQContentHeader;
+import com.rabbitmq.client3.impl.AMQImpl;
+import com.rabbitmq.client3.impl.Frame;
 import com.rabbitmq.utility.BlockingCell;
 import com.rabbitmq.utility.Utility;
 

@@ -14,7 +14,7 @@
 //  Copyright (c) 2007-2013 GoPivotal, Inc.  All rights reserved.
 //
 
-package com.rabbitmq.client.test;
+package com.rabbitmq.client3.test;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -23,9 +23,9 @@ import java.util.List;
 
 import junit.framework.TestCase;
 
-import com.rabbitmq.client.Channel;
-import com.rabbitmq.client.Connection;
-import com.rabbitmq.client.ConnectionFactory;
+import com.rabbitmq.client3.Channel;
+import com.rabbitmq.client3.Connection;
+import com.rabbitmq.client3.ConnectionFactory;
 
 public class ChannelNumberAllocationTests extends TestCase{
   static int CHANNEL_COUNT = 100;

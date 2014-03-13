@@ -15,21 +15,21 @@
 //
 
 
-package com.rabbitmq.client.test.server;
+package com.rabbitmq.client3.test.server;
 
-import com.rabbitmq.client.AlreadyClosedException;
-import com.rabbitmq.client.AuthenticationFailureException;
-import com.rabbitmq.client.test.BrokerTestCase;
+import com.rabbitmq.client3.AlreadyClosedException;
+import com.rabbitmq.client3.AuthenticationFailureException;
+import com.rabbitmq.client3.test.BrokerTestCase;
 import java.io.IOException;
 import java.util.Map;
 import java.util.HashMap;
 
-import com.rabbitmq.client.AMQP;
-import com.rabbitmq.client.Channel;
-import com.rabbitmq.client.Connection;
-import com.rabbitmq.client.ConnectionFactory;
-import com.rabbitmq.client.QueueingConsumer;
-import com.rabbitmq.client.impl.AMQChannel;
+import com.rabbitmq.client3.AMQP;
+import com.rabbitmq.client3.Channel;
+import com.rabbitmq.client3.Connection;
+import com.rabbitmq.client3.ConnectionFactory;
+import com.rabbitmq.client3.QueueingConsumer;
+import com.rabbitmq.client3.impl.AMQChannel;
 import com.rabbitmq.tools.Host;
 
 public class Permissions extends BrokerTestCase

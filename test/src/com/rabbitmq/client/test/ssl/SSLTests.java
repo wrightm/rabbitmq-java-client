@@ -15,7 +15,7 @@
 //
 
 
-package com.rabbitmq.client.test.ssl;
+package com.rabbitmq.client3.test.ssl;
 
 import junit.framework.TestCase;
 import junit.framework.TestSuite;

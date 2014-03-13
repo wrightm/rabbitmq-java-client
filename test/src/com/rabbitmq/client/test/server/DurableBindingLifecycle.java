@@ -15,11 +15,11 @@
 //
 
 
-package com.rabbitmq.client.test.server;
+package com.rabbitmq.client3.test.server;
 
-import com.rabbitmq.client.GetResponse;
+import com.rabbitmq.client3.GetResponse;
 
-import com.rabbitmq.client.test.functional.BindingLifecycleBase;
+import com.rabbitmq.client3.test.functional.BindingLifecycleBase;
 
 import com.rabbitmq.tools.Host;
 

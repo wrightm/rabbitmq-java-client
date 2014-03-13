@@ -150,7 +150,7 @@ def printFileHeader():
 def genJavaApi(spec):
     def printHeader():
         printFileHeader()
-        print "package com.rabbitmq.client;"
+        print "package com.rabbitmq.client3;"
         print
         print "import java.io.DataInputStream;"
         print "import java.io.IOException;"
@@ -159,9 +159,9 @@ def genJavaApi(spec):
         print "import java.util.Map;"
         print "import java.util.Date;"
         print
-        print "import com.rabbitmq.client.impl.ContentHeaderPropertyWriter;"
-        print "import com.rabbitmq.client.impl.ContentHeaderPropertyReader;"
-        print "import com.rabbitmq.client.impl.LongStringHelper;"
+        print "import com.rabbitmq.client3.impl.ContentHeaderPropertyWriter;"
+        print "import com.rabbitmq.client3.impl.ContentHeaderPropertyReader;"
+        print "import com.rabbitmq.client3.impl.LongStringHelper;"
 
     def printProtocolClass():
         print
@@ -178,7 +178,7 @@ def genJavaApi(spec):
 
     def builder(c,m):
         def ctorCall(c,m):
-            ctor_call = "com.rabbitmq.client.impl.AMQImpl.%s.%s" % (java_class_name(c.name),java_class_name(m.name))
+            ctor_call = "com.rabbitmq.client3.impl.AMQImpl.%s.%s" % (java_class_name(c.name),java_class_name(m.name))
             ctor_arg_list = [ java_field_name(a.name) for a in m.arguments ]
             print "                    return new %s(%s);" % (ctor_call, ", ".join(ctor_arg_list))
 
@@ -337,7 +337,7 @@ def genJavaApi(spec):
         jClassName = java_class_name(c.name)
 
         print
-        print "    public static class %sProperties extends com.rabbitmq.client.impl.AMQ%sProperties {" % (jClassName, jClassName)
+        print "    public static class %sProperties extends com.rabbitmq.client3.impl.AMQ%sProperties {" % (jClassName, jClassName)
         #property fields
         for f in c.fields:
             (fType, fName) = (java_boxed_type(java_field_type(spec, f.domain)), java_field_name(f.name))
@@ -412,7 +412,7 @@ def genJavaApi(spec):
 def genJavaImpl(spec):
     def printHeader():
         printFileHeader()
-        print "package com.rabbitmq.client.impl;"
+        print "package com.rabbitmq.client3.impl;"
         print
         print "import java.io.IOException;"
         print "import java.io.DataInputStream;"
@@ -420,10 +420,10 @@ def genJavaImpl(spec):
         print "import java.util.HashMap;"
         print "import java.util.Map;"
         print
-        print "import com.rabbitmq.client.AMQP;"
-        print "import com.rabbitmq.client.LongString;"
-        print "import com.rabbitmq.client.UnknownClassOrMethodId;"
-        print "import com.rabbitmq.client.UnexpectedMethodError;"
+        print "import com.rabbitmq.client3.AMQP;"
+        print "import com.rabbitmq.client3.LongString;"
+        print "import com.rabbitmq.client3.UnknownClassOrMethodId;"
+        print "import com.rabbitmq.client3.UnexpectedMethodError;"
 
     def printClassMethods(spec, c):
         print
@@ -501,7 +501,7 @@ def genJavaImpl(spec):
             print
             print "        public static class %s" % (java_class_name(m.name),)
             print "            extends Method"
-            print "            implements com.rabbitmq.client.AMQP.%s.%s" % (java_class_name(c.name), java_class_name(m.name))
+            print "            implements com.rabbitmq.client3.AMQP.%s.%s" % (java_class_name(c.name), java_class_name(m.name))
             print "        {"
             print "            public static final int INDEX = %s;" % (m.index)
             print

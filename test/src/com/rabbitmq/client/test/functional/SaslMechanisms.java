@@ -14,18 +14,18 @@
 //  Copyright (c) 2007-2013 GoPivotal, Inc.  All rights reserved.
 //
 
-package com.rabbitmq.client.test.functional;
+package com.rabbitmq.client3.test.functional;
 
-import com.rabbitmq.client.AuthenticationFailureException;
-import com.rabbitmq.client.Connection;
-import com.rabbitmq.client.ConnectionFactory;
-import com.rabbitmq.client.LongString;
-import com.rabbitmq.client.PossibleAuthenticationFailureException;
-import com.rabbitmq.client.SaslConfig;
-import com.rabbitmq.client.SaslMechanism;
-import com.rabbitmq.client.impl.AMQConnection;
-import com.rabbitmq.client.impl.LongStringHelper;
-import com.rabbitmq.client.test.BrokerTestCase;
+import com.rabbitmq.client3.AuthenticationFailureException;
+import com.rabbitmq.client3.Connection;
+import com.rabbitmq.client3.ConnectionFactory;
+import com.rabbitmq.client3.LongString;
+import com.rabbitmq.client3.PossibleAuthenticationFailureException;
+import com.rabbitmq.client3.SaslConfig;
+import com.rabbitmq.client3.SaslMechanism;
+import com.rabbitmq.client3.impl.AMQConnection;
+import com.rabbitmq.client3.impl.LongStringHelper;
+import com.rabbitmq.client3.test.BrokerTestCase;
 
 import java.io.IOException;
 import java.util.Arrays;

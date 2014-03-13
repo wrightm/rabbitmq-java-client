@@ -16,11 +16,11 @@
 
 package com.rabbitmq.examples.perf;
 
-import com.rabbitmq.client.Channel;
-import com.rabbitmq.client.ConsumerCancelledException;
-import com.rabbitmq.client.Envelope;
-import com.rabbitmq.client.QueueingConsumer;
-import com.rabbitmq.client.ShutdownSignalException;
+import com.rabbitmq.client3.Channel;
+import com.rabbitmq.client3.ConsumerCancelledException;
+import com.rabbitmq.client3.Envelope;
+import com.rabbitmq.client3.QueueingConsumer;
+import com.rabbitmq.client3.ShutdownSignalException;
 
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;

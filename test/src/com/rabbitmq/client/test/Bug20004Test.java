@@ -14,7 +14,7 @@
 //  Copyright (c) 2007-2013 GoPivotal, Inc.  All rights reserved.
 //
 
-package com.rabbitmq.client.test;
+package com.rabbitmq.client3.test;
 
 import java.io.IOException;
 

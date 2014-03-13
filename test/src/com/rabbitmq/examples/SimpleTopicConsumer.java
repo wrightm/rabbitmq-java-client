@@ -16,11 +16,11 @@
 
 package com.rabbitmq.examples;
 
-import com.rabbitmq.client.Channel;
-import com.rabbitmq.client.Connection;
-import com.rabbitmq.client.ConnectionFactory;
-import com.rabbitmq.client.Envelope;
-import com.rabbitmq.client.QueueingConsumer;
+import com.rabbitmq.client3.Channel;
+import com.rabbitmq.client3.Connection;
+import com.rabbitmq.client3.ConnectionFactory;
+import com.rabbitmq.client3.Envelope;
+import com.rabbitmq.client3.QueueingConsumer;
 
 public class SimpleTopicConsumer {
     public static void main(String[] args) {

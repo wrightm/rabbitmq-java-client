@@ -23,9 +23,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.rabbitmq.client.AMQP;
-import com.rabbitmq.client.Channel;
-import com.rabbitmq.client.StringRpcServer;
+import com.rabbitmq.client3.AMQP;
+import com.rabbitmq.client3.Channel;
+import com.rabbitmq.client3.StringRpcServer;
 import com.rabbitmq.tools.json.JSONReader;
 import com.rabbitmq.tools.json.JSONWriter;
 

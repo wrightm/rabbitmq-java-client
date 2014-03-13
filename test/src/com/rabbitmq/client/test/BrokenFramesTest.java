@@ -15,7 +15,7 @@
 //
 
 
-package com.rabbitmq.client.test;
+package com.rabbitmq.client3.test;
 
 import java.io.IOException;
 import java.net.InetAddress;
@@ -28,13 +28,13 @@ import java.util.concurrent.Executors;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-import com.rabbitmq.client.AMQP;
-import com.rabbitmq.client.ConnectionFactory;
-import com.rabbitmq.client.UnexpectedFrameError;
-import com.rabbitmq.client.impl.AMQConnection;
-import com.rabbitmq.client.impl.Frame;
-import com.rabbitmq.client.impl.FrameHandler;
-import com.rabbitmq.client.impl.AMQImpl.Basic.Publish;
+import com.rabbitmq.client3.AMQP;
+import com.rabbitmq.client3.ConnectionFactory;
+import com.rabbitmq.client3.UnexpectedFrameError;
+import com.rabbitmq.client3.impl.AMQConnection;
+import com.rabbitmq.client3.impl.Frame;
+import com.rabbitmq.client3.impl.FrameHandler;
+import com.rabbitmq.client3.impl.AMQImpl.Basic.Publish;
 
 public class BrokenFramesTest extends TestCase {
     public static TestSuite suite() {

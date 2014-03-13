@@ -15,7 +15,7 @@
 //
 
 
-package com.rabbitmq.client.test.performance;
+package com.rabbitmq.client3.test.performance;
 
 import java.util.Iterator;
 

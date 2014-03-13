@@ -16,11 +16,11 @@
 
 package com.rabbitmq.examples.perf;
 
-import com.rabbitmq.client.AMQP;
-import com.rabbitmq.client.Channel;
-import com.rabbitmq.client.Command;
-import com.rabbitmq.client.Connection;
-import com.rabbitmq.client.ShutdownSignalException;
+import com.rabbitmq.client3.AMQP;
+import com.rabbitmq.client3.Channel;
+import com.rabbitmq.client3.Command;
+import com.rabbitmq.client3.Connection;
+import com.rabbitmq.client3.ShutdownSignalException;
 
 import java.io.IOException;
 import java.util.ArrayList;

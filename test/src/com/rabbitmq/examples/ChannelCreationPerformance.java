@@ -19,9 +19,9 @@ package com.rabbitmq.examples;
 import java.util.ArrayList;
 import java.util.Collections;
 
-import com.rabbitmq.client.Channel;
-import com.rabbitmq.client.Connection;
-import com.rabbitmq.client.ConnectionFactory;
+import com.rabbitmq.client3.Channel;
+import com.rabbitmq.client3.Connection;
+import com.rabbitmq.client3.ConnectionFactory;
 
 class ChannelCreationPerformance {
     static Connection connect() throws Exception{

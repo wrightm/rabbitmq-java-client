@@ -16,11 +16,11 @@
 
 package com.rabbitmq.examples.perf;
 
-import com.rabbitmq.client.AMQP;
-import com.rabbitmq.client.Channel;
-import com.rabbitmq.client.ConfirmListener;
-import com.rabbitmq.client.MessageProperties;
-import com.rabbitmq.client.ReturnListener;
+import com.rabbitmq.client3.AMQP;
+import com.rabbitmq.client3.Channel;
+import com.rabbitmq.client3.ConfirmListener;
+import com.rabbitmq.client3.MessageProperties;
+import com.rabbitmq.client3.ReturnListener;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;

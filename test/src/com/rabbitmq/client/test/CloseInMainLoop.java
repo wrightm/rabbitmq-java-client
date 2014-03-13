@@ -14,7 +14,7 @@
 //  Copyright (c) 2007-2013 GoPivotal, Inc.  All rights reserved.
 //
 
-package com.rabbitmq.client.test;
+package com.rabbitmq.client3.test;
 
 import java.io.IOException;
 import java.util.concurrent.CountDownLatch;
@@ -24,16 +24,16 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.net.SocketFactory;
 
-import com.rabbitmq.client.AMQP;
-import com.rabbitmq.client.Channel;
-import com.rabbitmq.client.Command;
-import com.rabbitmq.client.ConnectionFactory;
-import com.rabbitmq.client.Consumer;
-import com.rabbitmq.client.DefaultConsumer;
-import com.rabbitmq.client.Envelope;
-import com.rabbitmq.client.impl.AMQConnection;
-import com.rabbitmq.client.impl.DefaultExceptionHandler;
-import com.rabbitmq.client.impl.SocketFrameHandler;
+import com.rabbitmq.client3.AMQP;
+import com.rabbitmq.client3.Channel;
+import com.rabbitmq.client3.Command;
+import com.rabbitmq.client3.ConnectionFactory;
+import com.rabbitmq.client3.Consumer;
+import com.rabbitmq.client3.DefaultConsumer;
+import com.rabbitmq.client3.Envelope;
+import com.rabbitmq.client3.impl.AMQConnection;
+import com.rabbitmq.client3.impl.DefaultExceptionHandler;
+import com.rabbitmq.client3.impl.SocketFrameHandler;
 
 public class CloseInMainLoop extends BrokerTestCase{
 

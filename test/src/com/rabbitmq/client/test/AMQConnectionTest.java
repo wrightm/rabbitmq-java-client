@@ -14,7 +14,7 @@
 //  Copyright (c) 2007-2013 GoPivotal, Inc.  All rights reserved.
 //
 
-package com.rabbitmq.client.test;
+package com.rabbitmq.client3.test;
 
 import java.io.IOException;
 import java.net.InetAddress;
@@ -28,14 +28,14 @@ import java.util.concurrent.Executors;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-import com.rabbitmq.client.Channel;
-import com.rabbitmq.client.Connection;
-import com.rabbitmq.client.ConnectionFactory;
-import com.rabbitmq.client.Consumer;
-import com.rabbitmq.client.impl.AMQConnection;
-import com.rabbitmq.client.impl.ExceptionHandler;
-import com.rabbitmq.client.impl.Frame;
-import com.rabbitmq.client.impl.FrameHandler;
+import com.rabbitmq.client3.Channel;
+import com.rabbitmq.client3.Connection;
+import com.rabbitmq.client3.ConnectionFactory;
+import com.rabbitmq.client3.Consumer;
+import com.rabbitmq.client3.impl.AMQConnection;
+import com.rabbitmq.client3.impl.ExceptionHandler;
+import com.rabbitmq.client3.impl.Frame;
+import com.rabbitmq.client3.impl.FrameHandler;
 
 /**
  * Test suite for AMQConnection.

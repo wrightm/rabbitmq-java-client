@@ -16,7 +16,7 @@
 
 package com.rabbitmq.examples.perf;
 
-import com.rabbitmq.client.ConnectionFactory;
+import com.rabbitmq.client3.ConnectionFactory;
 
 public class RateVsLatencyScenario implements Scenario {
     private String name;

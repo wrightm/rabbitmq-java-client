@@ -24,9 +24,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeoutException;
 
-import com.rabbitmq.client.Channel;
-import com.rabbitmq.client.RpcClient;
-import com.rabbitmq.client.ShutdownSignalException;
+import com.rabbitmq.client3.Channel;
+import com.rabbitmq.client3.RpcClient;
+import com.rabbitmq.client3.ShutdownSignalException;
 import com.rabbitmq.tools.json.JSONReader;
 import com.rabbitmq.tools.json.JSONWriter;
 

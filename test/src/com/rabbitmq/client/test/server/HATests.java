@@ -14,9 +14,9 @@
 //  Copyright (c) 2007-2013 GoPivotal, Inc.  All rights reserved.
 //
 
-package com.rabbitmq.client.test.server;
+package com.rabbitmq.client3.test.server;
 
-import com.rabbitmq.client.test.functional.FunctionalTests;
+import com.rabbitmq.client3.test.functional.FunctionalTests;
 import com.rabbitmq.tools.Host;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;

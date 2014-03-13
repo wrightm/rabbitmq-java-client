@@ -1,7 +1,7 @@
-package com.rabbitmq.client.test.server;
+package com.rabbitmq.client3.test.server;
 
-import com.rabbitmq.client.MessageProperties;
-import com.rabbitmq.client.test.BrokerTestCase;
+import com.rabbitmq.client3.MessageProperties;
+import com.rabbitmq.client3.test.BrokerTestCase;
 
 import java.io.IOException;
 

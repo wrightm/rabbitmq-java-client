@@ -15,7 +15,7 @@
 //
 
 
-package com.rabbitmq.client.test;
+package com.rabbitmq.client3.test;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;

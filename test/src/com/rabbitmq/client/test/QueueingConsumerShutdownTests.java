@@ -14,15 +14,15 @@
 //  Copyright (c) 2007-2013 GoPivotal, Inc.  All rights reserved.
 //
 
-package com.rabbitmq.client.test;
+package com.rabbitmq.client3.test;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import com.rabbitmq.client.Channel;
-import com.rabbitmq.client.QueueingConsumer;
-import com.rabbitmq.client.ShutdownSignalException;
+import com.rabbitmq.client3.Channel;
+import com.rabbitmq.client3.QueueingConsumer;
+import com.rabbitmq.client3.ShutdownSignalException;
 
 public class QueueingConsumerShutdownTests extends BrokerTestCase{
   static final String QUEUE = "some-queue";

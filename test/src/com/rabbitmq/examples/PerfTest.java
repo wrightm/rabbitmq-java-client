@@ -30,7 +30,7 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
-import com.rabbitmq.client.ConnectionFactory;
+import com.rabbitmq.client3.ConnectionFactory;
 
 
 public class PerfTest {

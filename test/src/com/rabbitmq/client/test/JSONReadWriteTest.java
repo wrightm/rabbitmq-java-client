@@ -15,7 +15,7 @@
 //
 
 
-package com.rabbitmq.client.test;
+package com.rabbitmq.client3.test;
 
 import java.io.BufferedReader;
 import java.io.IOException;

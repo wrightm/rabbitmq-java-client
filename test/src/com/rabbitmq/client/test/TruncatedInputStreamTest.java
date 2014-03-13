@@ -14,7 +14,7 @@
 //  Copyright (c) 2007-2013 GoPivotal, Inc.  All rights reserved.
 //
 
-package com.rabbitmq.client.test;
+package com.rabbitmq.client3.test;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -23,7 +23,7 @@ import java.io.InputStream;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-import com.rabbitmq.client.impl.TruncatedInputStream;
+import com.rabbitmq.client3.impl.TruncatedInputStream;
 
 /**
  * Some basic (retroactive) tests for TruncatedInputStream.

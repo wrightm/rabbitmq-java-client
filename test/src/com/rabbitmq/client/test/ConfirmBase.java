@@ -14,9 +14,9 @@
 //  Copyright (c) 2011-2013 GoPivotal, Inc.  All rights reserved.
 //
 
-package com.rabbitmq.client.test;
+package com.rabbitmq.client3.test;
 
-import com.rabbitmq.client.ShutdownSignalException;
+import com.rabbitmq.client3.ShutdownSignalException;
 
 import java.io.IOException;
 import java.util.concurrent.ExecutionException;

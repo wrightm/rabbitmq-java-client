@@ -14,7 +14,7 @@
 //  Copyright (c) 2007-2013 GoPivotal, Inc.  All rights reserved.
 //
 
-package com.rabbitmq.client.test.ssl;
+package com.rabbitmq.client3.test.ssl;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -29,7 +29,7 @@ import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManagerFactory;
 
-import com.rabbitmq.client.ConnectionFactory;
+import com.rabbitmq.client3.ConnectionFactory;
 
 /**
  * Test for bug 19356 - SSL Support in rabbitmq

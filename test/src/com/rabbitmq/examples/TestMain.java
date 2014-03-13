@@ -23,21 +23,21 @@ import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.net.URISyntaxException;
 
-import com.rabbitmq.client.AMQP;
-import com.rabbitmq.client.Address;
-import com.rabbitmq.client.Channel;
-import com.rabbitmq.client.Connection;
-import com.rabbitmq.client.ConnectionFactory;
-import com.rabbitmq.client.DefaultConsumer;
-import com.rabbitmq.client.Envelope;
-import com.rabbitmq.client.GetResponse;
-import com.rabbitmq.client.MessageProperties;
-import com.rabbitmq.client.Method;
-import com.rabbitmq.client.ReturnListener;
-import com.rabbitmq.client.ShutdownSignalException;
-import com.rabbitmq.client.impl.AMQConnection;
-import com.rabbitmq.client.impl.FrameHandler;
-import com.rabbitmq.client.impl.SocketFrameHandler;
+import com.rabbitmq.client3.AMQP;
+import com.rabbitmq.client3.Address;
+import com.rabbitmq.client3.Channel;
+import com.rabbitmq.client3.Connection;
+import com.rabbitmq.client3.ConnectionFactory;
+import com.rabbitmq.client3.DefaultConsumer;
+import com.rabbitmq.client3.Envelope;
+import com.rabbitmq.client3.GetResponse;
+import com.rabbitmq.client3.MessageProperties;
+import com.rabbitmq.client3.Method;
+import com.rabbitmq.client3.ReturnListener;
+import com.rabbitmq.client3.ShutdownSignalException;
+import com.rabbitmq.client3.impl.AMQConnection;
+import com.rabbitmq.client3.impl.FrameHandler;
+import com.rabbitmq.client3.impl.SocketFrameHandler;
 import com.rabbitmq.utility.BlockingCell;
 
 public class TestMain {

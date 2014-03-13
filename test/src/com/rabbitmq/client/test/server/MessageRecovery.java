@@ -13,12 +13,12 @@
 //  The Initial Developer of the Original Code is GoPivotal, Inc.
 //  Copyright (c) 2007-2013 GoPivotal, Inc.  All rights reserved.
 
-package com.rabbitmq.client.test.server;
+package com.rabbitmq.client3.test.server;
 
-import com.rabbitmq.client.AMQP;
-import com.rabbitmq.client.Channel;
-import com.rabbitmq.client.MessageProperties;
-import com.rabbitmq.client.test.ConfirmBase;
+import com.rabbitmq.client3.AMQP;
+import com.rabbitmq.client3.Channel;
+import com.rabbitmq.client3.MessageProperties;
+import com.rabbitmq.client3.test.ConfirmBase;
 
 import java.io.IOException;
 

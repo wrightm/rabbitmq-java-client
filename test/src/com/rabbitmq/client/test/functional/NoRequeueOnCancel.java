@@ -15,12 +15,12 @@
 //
 
 
-package com.rabbitmq.client.test.functional;
+package com.rabbitmq.client3.test.functional;
 
-import com.rabbitmq.client.test.BrokerTestCase;
+import com.rabbitmq.client3.test.BrokerTestCase;
 import java.io.IOException;
 
-import com.rabbitmq.client.QueueingConsumer;
+import com.rabbitmq.client3.QueueingConsumer;
 
 public class NoRequeueOnCancel extends BrokerTestCase
 {

@@ -15,13 +15,13 @@
 //
 
 
-package com.rabbitmq.client.test.server;
+package com.rabbitmq.client3.test.server;
 
 import java.io.IOException;
 
-import com.rabbitmq.client.AMQP;
-import com.rabbitmq.client.Channel;
-import com.rabbitmq.client.test.BrokerTestCase;
+import com.rabbitmq.client3.AMQP;
+import com.rabbitmq.client3.Channel;
+import com.rabbitmq.client3.test.BrokerTestCase;
 import com.rabbitmq.tools.Host;
 
 /**

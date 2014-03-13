@@ -14,7 +14,7 @@
 //  Copyright (c) 2007-2013 GoPivotal, Inc.  All rights reserved.
 //
 
-package com.rabbitmq.client.test.server;
+package com.rabbitmq.client3.test.server;
 
 import java.io.IOException;
 import java.util.concurrent.CountDownLatch;
@@ -22,13 +22,13 @@ import java.util.concurrent.Semaphore;
 
 import junit.framework.TestSuite;
 
-import com.rabbitmq.client.Channel;
-import com.rabbitmq.client.Connection;
-import com.rabbitmq.client.Consumer;
-import com.rabbitmq.client.DefaultConsumer;
-import com.rabbitmq.client.MessageProperties;
-import com.rabbitmq.client.ShutdownSignalException;
-import com.rabbitmq.client.test.BrokerTestCase;
+import com.rabbitmq.client3.Channel;
+import com.rabbitmq.client3.Connection;
+import com.rabbitmq.client3.Consumer;
+import com.rabbitmq.client3.DefaultConsumer;
+import com.rabbitmq.client3.MessageProperties;
+import com.rabbitmq.client3.ShutdownSignalException;
+import com.rabbitmq.client3.test.BrokerTestCase;
 
 /**
  * Test for bug 19219 - timeouts due to task parallelism in channel

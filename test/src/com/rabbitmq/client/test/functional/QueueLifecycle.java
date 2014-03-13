@@ -15,16 +15,16 @@
 //
 
 
-package com.rabbitmq.client.test.functional;
+package com.rabbitmq.client3.test.functional;
 
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.rabbitmq.client.AMQP;
-import com.rabbitmq.client.QueueingConsumer;
-import com.rabbitmq.client.test.BrokerTestCase;
+import com.rabbitmq.client3.AMQP;
+import com.rabbitmq.client3.QueueingConsumer;
+import com.rabbitmq.client3.test.BrokerTestCase;
 
 /**
  * Test queue auto-delete and exclusive semantics.

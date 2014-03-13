@@ -15,10 +15,10 @@
 //
 
 
-package com.rabbitmq.client.test.server;
+package com.rabbitmq.client3.test.server;
 
-import com.rabbitmq.client.AMQP;
-import com.rabbitmq.client.test.functional.ClusteredTestBase;
+import com.rabbitmq.client3.AMQP;
+import com.rabbitmq.client3.test.functional.ClusteredTestBase;
 import com.rabbitmq.tools.Host;
 
 import java.io.IOException;

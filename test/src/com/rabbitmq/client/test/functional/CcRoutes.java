@@ -14,12 +14,12 @@
 //  Copyright (c) 2007-2013 GoPivotal, Inc.  All rights reserved.
 //
 
-package com.rabbitmq.client.test.functional;
+package com.rabbitmq.client3.test.functional;
 
-import com.rabbitmq.client.AMQP;
-import com.rabbitmq.client.AMQP.BasicProperties;
-import com.rabbitmq.client.GetResponse;
-import com.rabbitmq.client.test.BrokerTestCase;
+import com.rabbitmq.client3.AMQP;
+import com.rabbitmq.client3.AMQP.BasicProperties;
+import com.rabbitmq.client3.GetResponse;
+import com.rabbitmq.client3.test.BrokerTestCase;
 
 import java.io.IOException;
 import java.util.ArrayList;

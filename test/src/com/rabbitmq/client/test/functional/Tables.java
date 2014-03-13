@@ -15,12 +15,12 @@
 //
 
 
-package com.rabbitmq.client.test.functional;
+package com.rabbitmq.client3.test.functional;
 
-import com.rabbitmq.client.test.BrokerTestCase;
-import com.rabbitmq.client.AMQP;
-import com.rabbitmq.client.impl.LongStringHelper;
-import com.rabbitmq.client.AMQP.BasicProperties;
+import com.rabbitmq.client3.test.BrokerTestCase;
+import com.rabbitmq.client3.AMQP;
+import com.rabbitmq.client3.impl.LongStringHelper;
+import com.rabbitmq.client3.AMQP.BasicProperties;
 
 import java.io.IOException;
 import java.util.Arrays;

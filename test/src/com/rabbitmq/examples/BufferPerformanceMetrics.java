@@ -20,12 +20,12 @@ import java.io.IOException;
 import java.net.Socket;
 import java.util.Random;
 
-import com.rabbitmq.client.AMQP.Queue;
-import com.rabbitmq.client.Channel;
-import com.rabbitmq.client.Connection;
-import com.rabbitmq.client.ConnectionFactory;
-import com.rabbitmq.client.MessageProperties;
-import com.rabbitmq.client.QueueingConsumer;
+import com.rabbitmq.client3.AMQP.Queue;
+import com.rabbitmq.client3.Channel;
+import com.rabbitmq.client3.Connection;
+import com.rabbitmq.client3.ConnectionFactory;
+import com.rabbitmq.client3.MessageProperties;
+import com.rabbitmq.client3.QueueingConsumer;
 
 
 /**

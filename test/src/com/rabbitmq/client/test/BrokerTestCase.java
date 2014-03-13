@@ -15,23 +15,23 @@
 //
 
 
-package com.rabbitmq.client.test;
+package com.rabbitmq.client3.test;
 
 import java.io.IOException;
 
 import junit.framework.TestCase;
 
-import com.rabbitmq.client.Channel;
-import com.rabbitmq.client.Command;
-import com.rabbitmq.client.Connection;
-import com.rabbitmq.client.ConnectionFactory;
-import com.rabbitmq.client.GetResponse;
-import com.rabbitmq.client.MessageProperties;
-import com.rabbitmq.client.Method;
-import com.rabbitmq.client.ShutdownSignalException;
-import com.rabbitmq.client.AlreadyClosedException;
-import com.rabbitmq.client.impl.ShutdownNotifierComponent;
-import com.rabbitmq.client.AMQP;
+import com.rabbitmq.client3.Channel;
+import com.rabbitmq.client3.Command;
+import com.rabbitmq.client3.Connection;
+import com.rabbitmq.client3.ConnectionFactory;
+import com.rabbitmq.client3.GetResponse;
+import com.rabbitmq.client3.MessageProperties;
+import com.rabbitmq.client3.Method;
+import com.rabbitmq.client3.ShutdownSignalException;
+import com.rabbitmq.client3.AlreadyClosedException;
+import com.rabbitmq.client3.impl.ShutdownNotifierComponent;
+import com.rabbitmq.client3.AMQP;
 import com.rabbitmq.tools.Host;
 
 public class BrokerTestCase extends TestCase {

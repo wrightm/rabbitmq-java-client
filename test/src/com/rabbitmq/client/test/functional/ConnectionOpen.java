@@ -15,18 +15,18 @@
 //
 
 
-package com.rabbitmq.client.test.functional;
+package com.rabbitmq.client3.test.functional;
 
 import java.io.IOException;
 import java.io.DataInputStream;
 import java.net.Socket;
 
-import com.rabbitmq.client.AMQP;
-import com.rabbitmq.client.MalformedFrameException;
-import com.rabbitmq.client.Method;
-import com.rabbitmq.client.impl.SocketFrameHandler;
-import com.rabbitmq.client.impl.AMQCommand;
-import com.rabbitmq.client.ConnectionFactory;
+import com.rabbitmq.client3.AMQP;
+import com.rabbitmq.client3.MalformedFrameException;
+import com.rabbitmq.client3.Method;
+import com.rabbitmq.client3.impl.SocketFrameHandler;
+import com.rabbitmq.client3.impl.AMQCommand;
+import com.rabbitmq.client3.ConnectionFactory;
 
 import junit.framework.TestCase;
 

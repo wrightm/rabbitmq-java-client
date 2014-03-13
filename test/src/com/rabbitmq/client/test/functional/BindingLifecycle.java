@@ -15,12 +15,12 @@
 //
 
 
-package com.rabbitmq.client.test.functional;
+package com.rabbitmq.client3.test.functional;
 
 import java.io.IOException;
 
-import com.rabbitmq.client.AMQP;
-import com.rabbitmq.client.GetResponse;
+import com.rabbitmq.client3.AMQP;
+import com.rabbitmq.client3.GetResponse;
 
 /**
  * This tests whether bindings are created and nuked properly.

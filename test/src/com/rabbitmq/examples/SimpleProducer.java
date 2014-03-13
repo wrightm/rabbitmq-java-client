@@ -16,9 +16,9 @@
 
 package com.rabbitmq.examples;
 
-import com.rabbitmq.client.Channel;
-import com.rabbitmq.client.Connection;
-import com.rabbitmq.client.ConnectionFactory;
+import com.rabbitmq.client3.Channel;
+import com.rabbitmq.client3.Connection;
+import com.rabbitmq.client3.ConnectionFactory;
 
 public class SimpleProducer {
     public static void main(String[] args) {

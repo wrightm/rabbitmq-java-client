@@ -17,7 +17,7 @@
 
 package com.rabbitmq.utility;
 
-import com.rabbitmq.client.impl.AMQChannel;
+import com.rabbitmq.client3.impl.AMQChannel;
 
 /**
  * This class provides a very stripped-down clone of some of the functionality in

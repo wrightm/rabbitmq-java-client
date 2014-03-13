@@ -1,6 +1,6 @@
 package com.rabbitmq.examples.perf;
 
-import com.rabbitmq.client.ConnectionFactory;
+import com.rabbitmq.client3.ConnectionFactory;
 
 import java.util.List;
 import java.util.Map;

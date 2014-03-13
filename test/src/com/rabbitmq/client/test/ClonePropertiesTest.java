@@ -14,13 +14,13 @@
 //  Copyright (c) 2007-2013 GoPivotal, Inc.  All rights reserved.
 //
 
-package com.rabbitmq.client.test;
+package com.rabbitmq.client3.test;
 
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-import com.rabbitmq.client.AMQP.BasicProperties;
-import com.rabbitmq.client.MessageProperties;
+import com.rabbitmq.client3.AMQP.BasicProperties;
+import com.rabbitmq.client3.MessageProperties;
 
 public class ClonePropertiesTest extends TestCase {
 

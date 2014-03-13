@@ -15,7 +15,7 @@
 //
 
 
-package com.rabbitmq.client.test;
+package com.rabbitmq.client3.test;
 
 import junit.framework.TestCase;
 import junit.framework.TestSuite;

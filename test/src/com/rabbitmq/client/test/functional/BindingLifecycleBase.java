@@ -15,11 +15,11 @@
 //
 
 
-package com.rabbitmq.client.test.functional;
+package com.rabbitmq.client3.test.functional;
 
-import com.rabbitmq.client.AMQP;
-import com.rabbitmq.client.GetResponse;
-import com.rabbitmq.client.QueueingConsumer;
+import com.rabbitmq.client3.AMQP;
+import com.rabbitmq.client3.GetResponse;
+import com.rabbitmq.client3.QueueingConsumer;
 import java.io.IOException;
 
 /**

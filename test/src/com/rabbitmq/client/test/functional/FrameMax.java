@@ -15,25 +15,25 @@
 //
 
 
-package com.rabbitmq.client.test.functional;
+package com.rabbitmq.client3.test.functional;
 
-import com.rabbitmq.client.test.BrokerTestCase;
+import com.rabbitmq.client3.test.BrokerTestCase;
 
 import java.io.IOException;
 import java.net.Socket;
 import java.util.concurrent.ExecutorService;
 
-import com.rabbitmq.client.Address;
-import com.rabbitmq.client.AMQP;
-import com.rabbitmq.client.Connection;
-import com.rabbitmq.client.ConnectionFactory;
-import com.rabbitmq.client.GetResponse;
-import com.rabbitmq.client.impl.AMQConnection;
-import com.rabbitmq.client.impl.AMQCommand;
-import com.rabbitmq.client.impl.Frame;
-import com.rabbitmq.client.impl.FrameHandler;
-import com.rabbitmq.client.impl.LongStringHelper;
-import com.rabbitmq.client.impl.SocketFrameHandler;
+import com.rabbitmq.client3.Address;
+import com.rabbitmq.client3.AMQP;
+import com.rabbitmq.client3.Connection;
+import com.rabbitmq.client3.ConnectionFactory;
+import com.rabbitmq.client3.GetResponse;
+import com.rabbitmq.client3.impl.AMQConnection;
+import com.rabbitmq.client3.impl.AMQCommand;
+import com.rabbitmq.client3.impl.Frame;
+import com.rabbitmq.client3.impl.FrameHandler;
+import com.rabbitmq.client3.impl.LongStringHelper;
+import com.rabbitmq.client3.impl.SocketFrameHandler;
 
 public class FrameMax extends BrokerTestCase {
     /* This value for FrameMax is larger than the minimum and less

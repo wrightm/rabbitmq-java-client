@@ -15,15 +15,15 @@
 //
 
 
-package com.rabbitmq.client.test.functional;
+package com.rabbitmq.client3.test.functional;
 
 import java.io.IOException;
 
-import com.rabbitmq.client.AMQP;
-import com.rabbitmq.client.QueueingConsumer;
-import com.rabbitmq.client.ShutdownSignalException;
-import com.rabbitmq.client.QueueingConsumer.Delivery;
-import com.rabbitmq.client.test.BrokerTestCase;
+import com.rabbitmq.client3.AMQP;
+import com.rabbitmq.client3.QueueingConsumer;
+import com.rabbitmq.client3.ShutdownSignalException;
+import com.rabbitmq.client3.QueueingConsumer.Delivery;
+import com.rabbitmq.client3.test.BrokerTestCase;
 
 public class ExchangeExchangeBindings extends BrokerTestCase {
 
