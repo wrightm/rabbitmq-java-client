@@ -1,5 +1,10 @@
 <?xml version="1.0"?>
 <project>
+    <parent>
+        <groupId>ru.headhunter.commons</groupId>
+        <artifactId>common-pom</artifactId>
+        <version>1.24</version>
+    </parent>
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.rabbitmq</groupId>
     <artifactId>amqp-client-hh</artifactId>
