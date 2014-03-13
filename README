@@ -1,0 +1,3 @@
+ant dist
+mvn-hh install:install-file -Dfile=build/dist/rabbitmq-client.jar -DpomFile=pom.xml
+mvn-hh deploy:deploy-file -Dfile=build/dist/rabbitmq-client.jar -DpomFile=pom.xml -Durl=dav:http://m2.hh.ru/content/repositories/releases -DrepositoryId=hh
