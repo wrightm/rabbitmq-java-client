@@ -2,8 +2,8 @@
 <project>
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.rabbitmq</groupId>
-    <artifactId>amqp-client</artifactId>
-    <version>VERSION</version>
+    <artifactId>amqp-client-hh</artifactId>
+    <version>3.2.4-SNAPSHOT</version>
     <packaging>jar</packaging>
     <name>RabbitMQ Java Client</name>
     <description>RabbitMQ AMQP Java Client</description>
@@ -23,8 +23,9 @@
     </licenses>
 
     <scm>
-      <url>http://hg.rabbitmq.com/rabbitmq-java-client</url>
-      <connection>scm:hg:http://hg.rabbitmq.com/rabbitmq-java-client</connection> 
+        <connection>scm:git:git://github.com/hhru/rabbitmq-java-client</connection>
+        <developerConnection>scm:git:git://github.com/hhru/rabbitmq-java-client</developerConnection>
+        <tag>HEAD</tag>
     </scm>
 
     <developers>
@@ -62,11 +63,4 @@
 
     </dependencies>
 
-    <distributionManagement>
-      <repository>
-        <id>sonatype-nexus-staging</id>
-        <name>Nexus Release Repository</name>
-        <url>http://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-      </repository>
-    </distributionManagement>
 </project>
