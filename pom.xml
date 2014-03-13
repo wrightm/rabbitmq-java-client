@@ -23,8 +23,8 @@
     </licenses>
 
     <scm>
-        <connection>scm:git:git://github.com/hhru/rabbitmq-java-client</connection>
-        <developerConnection>scm:git:git://github.com/hhru/rabbitmq-java-client</developerConnection>
+        <connection>scm:git:git@github.com:hhru/rabbitmq-java-client.git</connection>
+        <developerConnection>scm:git:git@github.com:hhru/rabbitmq-java-client.git</developerConnection>
         <tag>HEAD</tag>
     </scm>
 
