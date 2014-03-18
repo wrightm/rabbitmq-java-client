@@ -22,8 +22,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-import com.rabbitmq.tools.json.JSONWriter;
-import com.rabbitmq.tools.json.JSONReader;
+import com.rabbitmq.tools3.json.JSONWriter;
+import com.rabbitmq.tools3.json.JSONReader;
 
 import junit.framework.TestCase;
 

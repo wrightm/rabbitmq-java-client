@@ -19,7 +19,7 @@ package com.rabbitmq.examples;
 import com.rabbitmq.client3.Channel;
 import com.rabbitmq.client3.Connection;
 import com.rabbitmq.client3.ConnectionFactory;
-import com.rabbitmq.tools.jsonrpc.JsonRpcClient;
+import com.rabbitmq.tools3.jsonrpc.JsonRpcClient;
 
 public class HelloJsonClient {
     private static final int RPC_TIMEOUT_ONE_SECOND = 1000;

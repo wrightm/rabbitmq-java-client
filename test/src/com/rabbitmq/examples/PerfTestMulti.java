@@ -19,8 +19,8 @@ package com.rabbitmq.examples;
 import com.rabbitmq.client3.ConnectionFactory;
 import com.rabbitmq.examples.perf.Scenario;
 import com.rabbitmq.examples.perf.ScenarioFactory;
-import com.rabbitmq.tools.json.JSONReader;
-import com.rabbitmq.tools.json.JSONWriter;
+import com.rabbitmq.tools3.json.JSONReader;
+import com.rabbitmq.tools3.json.JSONWriter;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;

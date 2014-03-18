@@ -19,7 +19,7 @@ package com.rabbitmq.examples;
 import com.rabbitmq.client3.Channel;
 import com.rabbitmq.client3.Connection;
 import com.rabbitmq.client3.ConnectionFactory;
-import com.rabbitmq.tools.jsonrpc.JsonRpcServer;
+import com.rabbitmq.tools3.jsonrpc.JsonRpcServer;
 
 public class HelloJsonServer {
     public static void main(String[] args) {
