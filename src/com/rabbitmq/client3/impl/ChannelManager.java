@@ -25,7 +25,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 import com.rabbitmq.client3.ShutdownSignalException;
-import com.rabbitmq.utility.IntAllocator;
+import com.rabbitmq.utility3.IntAllocator;
 
 /**
  * Manages a set of channels, indexed by channel number (<code><b>1.._channelMax</b></code>).

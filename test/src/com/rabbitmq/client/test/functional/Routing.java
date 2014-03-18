@@ -22,7 +22,7 @@ import com.rabbitmq.client3.test.BrokerTestCase;
 import com.rabbitmq.client3.AMQP;
 import com.rabbitmq.client3.GetResponse;
 import com.rabbitmq.client3.ReturnListener;
-import com.rabbitmq.utility.BlockingCell;
+import com.rabbitmq.utility3.BlockingCell;
 
 import java.io.IOException;
 import java.util.List;

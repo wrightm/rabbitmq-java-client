@@ -25,7 +25,7 @@ import com.rabbitmq.client3.Command;
 import com.rabbitmq.client3.Method;
 import com.rabbitmq.client3.Connection;
 import com.rabbitmq.client3.ShutdownSignalException;
-import com.rabbitmq.utility.BlockingValueOrException;
+import com.rabbitmq.utility3.BlockingValueOrException;
 
 /**
  * Base class modelling an AMQ channel. Subclasses implement

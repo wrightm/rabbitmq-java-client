@@ -30,7 +30,7 @@ import com.rabbitmq.client3.ConnectionFactory;
 import com.rabbitmq.client3.DefaultConsumer;
 import com.rabbitmq.client3.Envelope;
 import com.rabbitmq.client3.ShutdownSignalException;
-import com.rabbitmq.utility.BlockingCell;
+import com.rabbitmq.utility3.BlockingCell;
 
 public class ConsumerMain implements Runnable {
     public static final int SUMMARY_EVERY_MS = 1000;

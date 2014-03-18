@@ -14,7 +14,7 @@
 //  Copyright (c) 2007-2013 GoPivotal, Inc.  All rights reserved.
 //
 
-package com.rabbitmq.tools;
+package com.rabbitmq.tools3;
 
 import java.io.BufferedOutputStream;
 import java.io.DataInputStream;
@@ -37,8 +37,8 @@ import com.rabbitmq.client3.impl.AMQCommand;
 import com.rabbitmq.client3.impl.AMQContentHeader;
 import com.rabbitmq.client3.impl.AMQImpl;
 import com.rabbitmq.client3.impl.Frame;
-import com.rabbitmq.utility.BlockingCell;
-import com.rabbitmq.utility.Utility;
+import com.rabbitmq.utility3.BlockingCell;
+import com.rabbitmq.utility3.Utility;
 
 /**
  * AMQP Protocol Analyzer program. Listens on a port (in-port) and when a

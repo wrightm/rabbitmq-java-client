@@ -20,7 +20,7 @@
  * by Frank Carver. Tony Garnock-Jones has made many changes to it
  * since then.
  */
-package com.rabbitmq.tools.json;
+package com.rabbitmq.tools3.json;
 
 import java.text.CharacterIterator;
 import java.text.StringCharacterIterator;

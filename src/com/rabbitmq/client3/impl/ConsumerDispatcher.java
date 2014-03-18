@@ -20,7 +20,7 @@ import com.rabbitmq.client3.Channel;
 import com.rabbitmq.client3.Consumer;
 import com.rabbitmq.client3.Envelope;
 import com.rabbitmq.client3.ShutdownSignalException;
-import com.rabbitmq.utility.Utility;
+import com.rabbitmq.utility3.Utility;
 
 import java.io.IOException;
 import java.util.Map;

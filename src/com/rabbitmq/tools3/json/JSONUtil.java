@@ -15,7 +15,7 @@
 //
 
 
-package com.rabbitmq.tools.json;
+package com.rabbitmq.tools3.json;
 
 import java.beans.BeanInfo;
 import java.beans.IntrospectionException;

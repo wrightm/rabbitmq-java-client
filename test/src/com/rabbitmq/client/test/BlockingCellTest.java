@@ -23,7 +23,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-import com.rabbitmq.utility.BlockingCell;
+import com.rabbitmq.utility3.BlockingCell;
 
 public class BlockingCellTest
     extends TestCase

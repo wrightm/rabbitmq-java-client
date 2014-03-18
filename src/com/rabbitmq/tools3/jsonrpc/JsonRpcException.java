@@ -15,11 +15,11 @@
 //
 
 
-package com.rabbitmq.tools.jsonrpc;
+package com.rabbitmq.tools3.jsonrpc;
 
 import java.util.Map;
 
-import com.rabbitmq.tools.json.JSONWriter;
+import com.rabbitmq.tools3.json.JSONWriter;
 
 /**
  * Thrown when a JSON-RPC service indicates an error occurred during a call.

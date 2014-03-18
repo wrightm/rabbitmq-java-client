@@ -14,7 +14,7 @@
 //  Copyright (c) 2007-2013 GoPivotal, Inc.  All rights reserved.
 //
 
-package com.rabbitmq.utility;
+package com.rabbitmq.utility3;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;

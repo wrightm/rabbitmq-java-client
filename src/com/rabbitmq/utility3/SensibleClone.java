@@ -14,26 +14,19 @@
 //  Copyright (c) 2007-2013 GoPivotal, Inc.  All rights reserved.
 //
 
-package com.rabbitmq.utility;
+package com.rabbitmq.utility3;
 
-import java.util.concurrent.TimeoutException;
+/** 
+ * This interface exists as a workaround for the annoyingness of java.lang.Cloneable.
+ * It is used for generic methods which need to accept something they can actually clone
+ * (Object.clone is protected and java.lang.Cloneable does not define a public clone method)
+ * and want to provide some guarantees of the type of the cloned object. 
+ */
+public interface SensibleClone<T extends SensibleClone<T>> extends Cloneable {
 
-public class BlockingValueOrException<V, E extends Throwable & SensibleClone<E>>
-    extends BlockingCell<ValueOrException<V, E>>
-{
-    public void setValue(V v) {
-        super.set(ValueOrException.<V, E>makeValue(v));
-    }
-
-    public void setException(E e) {
-        super.set(ValueOrException.<V, E>makeException(e));
-    }
-
-    public V uninterruptibleGetValue() throws E {
-        return uninterruptibleGet().getValue();
-    }
-
-    public V uninterruptibleGetValue(int timeout) throws E, TimeoutException {
-    	return uninterruptibleGet(timeout).getValue();
-    }
+  /**
+   * Like Object.clone but sensible; in particular, public and declared to return
+   * the right type. 
+   */
+  public T sensibleClone();
 }

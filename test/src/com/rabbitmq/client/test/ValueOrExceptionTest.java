@@ -19,8 +19,8 @@ package com.rabbitmq.client3.test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-import com.rabbitmq.utility.ValueOrException;
-import com.rabbitmq.utility.SensibleClone;
+import com.rabbitmq.utility3.ValueOrException;
+import com.rabbitmq.utility3.SensibleClone;
 
 
 public class ValueOrExceptionTest extends TestCase {

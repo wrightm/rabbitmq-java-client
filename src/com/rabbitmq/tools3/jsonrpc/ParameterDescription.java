@@ -15,12 +15,12 @@
 //
 
 
-package com.rabbitmq.tools.jsonrpc;
+package com.rabbitmq.tools3.jsonrpc;
 
 import java.util.Collection;
 import java.util.Map;
 
-import com.rabbitmq.tools.json.JSONUtil;
+import com.rabbitmq.tools3.json.JSONUtil;
 
 /**
  * Description of a single JSON-RPC procedure parameter.

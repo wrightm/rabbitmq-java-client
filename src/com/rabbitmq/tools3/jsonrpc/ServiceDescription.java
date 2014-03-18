@@ -15,14 +15,14 @@
 //
 
 
-package com.rabbitmq.tools.jsonrpc;
+package com.rabbitmq.tools3.jsonrpc;
 
 import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.rabbitmq.tools.json.JSONUtil;
+import com.rabbitmq.tools3.json.JSONUtil;
 
 /**
  * Description of a JSON-RPC service.

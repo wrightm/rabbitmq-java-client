@@ -15,7 +15,7 @@
 //
 
 
-package com.rabbitmq.utility;
+package com.rabbitmq.utility3;
 
 import java.util.concurrent.TimeoutException;
 

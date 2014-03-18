@@ -14,7 +14,7 @@
 //  Copyright (c) 2007-2013 GoPivotal, Inc.  All rights reserved.
 //
 
-package com.rabbitmq.tools.jsonrpc;
+package com.rabbitmq.tools3.jsonrpc;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationHandler;
@@ -27,8 +27,8 @@ import java.util.concurrent.TimeoutException;
 import com.rabbitmq.client3.Channel;
 import com.rabbitmq.client3.RpcClient;
 import com.rabbitmq.client3.ShutdownSignalException;
-import com.rabbitmq.tools.json.JSONReader;
-import com.rabbitmq.tools.json.JSONWriter;
+import com.rabbitmq.tools3.json.JSONReader;
+import com.rabbitmq.tools3.json.JSONWriter;
 
 /**
 	  <a href="http://json-rpc.org">JSON-RPC</a> is a lightweight

@@ -46,8 +46,8 @@ import com.rabbitmq.client3.SaslConfig;
 import com.rabbitmq.client3.SaslMechanism;
 import com.rabbitmq.client3.ShutdownSignalException;
 import com.rabbitmq.client3.impl.AMQChannel.BlockingRpcContinuation;
-import com.rabbitmq.utility.BlockingCell;
-import com.rabbitmq.utility.Utility;
+import com.rabbitmq.utility3.BlockingCell;
+import com.rabbitmq.utility3.Utility;
 
 final class Copyright {
     final static String COPYRIGHT="Copyright (C) 2007-2013 GoPivotal, Inc.";

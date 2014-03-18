@@ -38,7 +38,7 @@ import com.rabbitmq.client3.ShutdownSignalException;
 import com.rabbitmq.client3.impl.AMQConnection;
 import com.rabbitmq.client3.impl.FrameHandler;
 import com.rabbitmq.client3.impl.SocketFrameHandler;
-import com.rabbitmq.utility.BlockingCell;
+import com.rabbitmq.utility3.BlockingCell;
 
 public class TestMain {
     public static void main(String[] args) throws IOException, URISyntaxException {

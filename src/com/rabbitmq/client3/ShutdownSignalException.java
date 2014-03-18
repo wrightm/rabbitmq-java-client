@@ -16,7 +16,7 @@
 
 package com.rabbitmq.client3;
 
-import com.rabbitmq.utility.SensibleClone;
+import com.rabbitmq.utility3.SensibleClone;
 
 /**
  * Encapsulates a shutdown condition for a connection to an AMQP broker.

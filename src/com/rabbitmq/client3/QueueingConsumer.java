@@ -23,7 +23,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
 import com.rabbitmq.client3.AMQP.BasicProperties;
-import com.rabbitmq.utility.Utility;
+import com.rabbitmq.utility3.Utility;
 
 /**
  * Convenience class: an implementation of {@link Consumer} with

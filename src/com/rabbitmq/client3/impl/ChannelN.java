@@ -46,7 +46,7 @@ import com.rabbitmq.client3.impl.AMQImpl.Confirm;
 import com.rabbitmq.client3.impl.AMQImpl.Exchange;
 import com.rabbitmq.client3.impl.AMQImpl.Queue;
 import com.rabbitmq.client3.impl.AMQImpl.Tx;
-import com.rabbitmq.utility.Utility;
+import com.rabbitmq.utility3.Utility;
 
 /**
  * Main interface to AMQP protocol functionality. Public API -

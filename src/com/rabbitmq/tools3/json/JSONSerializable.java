@@ -15,7 +15,7 @@
 //
 
 
-package com.rabbitmq.tools.json;
+package com.rabbitmq.tools3.json;
 
 /**
  * Interface for classes that wish to control their own serialization.

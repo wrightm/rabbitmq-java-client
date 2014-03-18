@@ -14,7 +14,7 @@
 //  Copyright (c) 2011-2013 GoPivotal, Inc.  All rights reserved.
 //
 
-package com.rabbitmq.utility;
+package com.rabbitmq.utility3;
 
 import java.util.HashSet;
 import java.util.Iterator;

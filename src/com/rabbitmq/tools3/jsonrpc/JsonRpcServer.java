@@ -15,7 +15,7 @@
 //
 
 
-package com.rabbitmq.tools.jsonrpc;
+package com.rabbitmq.tools3.jsonrpc;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
@@ -26,8 +26,8 @@ import java.util.Map;
 import com.rabbitmq.client3.AMQP;
 import com.rabbitmq.client3.Channel;
 import com.rabbitmq.client3.StringRpcServer;
-import com.rabbitmq.tools.json.JSONReader;
-import com.rabbitmq.tools.json.JSONWriter;
+import com.rabbitmq.tools3.json.JSONReader;
+import com.rabbitmq.tools3.json.JSONWriter;
 
 /**
  * JSON-RPC Server class.

@@ -33,7 +33,7 @@ import com.rabbitmq.client3.impl.MethodArgumentReader;
 import com.rabbitmq.client3.impl.MethodArgumentWriter;
 import com.rabbitmq.client3.impl.ValueReader;
 import com.rabbitmq.client3.impl.ValueWriter;
-import com.rabbitmq.utility.BlockingCell;
+import com.rabbitmq.utility3.BlockingCell;
 
 /**
  * Convenience class which manages a temporary reply queue for simple RPC-style communication.
